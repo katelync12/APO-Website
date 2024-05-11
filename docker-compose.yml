@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  djangoapp:
+    build: .
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_NAME=apo_database
+      - DB_USER=apo
+      - DB_PASSWORD=apo
+      - DB_HOST=db_apo
+      - DB_PORT=5432
+    depends_on:
+      - db_apo
+
+  db_apo:
+    image: postgres
+    environment:
+      - POSTGRES_DB=apo_database
+      - POSTGRES_USER=apo
+      - POSTGRES_PASSWORD=apo
