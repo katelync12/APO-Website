@@ -4,8 +4,9 @@ Here is how to get started
 1. Put the .env file inside of the todo folder. The todo folder is the main project folder for Django. This .env file contains information about database connection, and is required for the project to run
 2. Have npm, pip on your computer. Use django 3.2.4, as higher versions no longer support Postgres version 10
 3. 
-3a. If you want to run the application locally, make sure all python libraries are installed. You can find them inside of the Dockerfile. Then run "python manage.py runserver 8002".
-3b. If you want to run the application through Docker, have the daemon running, and call "docker build . -t django-app", then "docker run -p 8002:8002 django-app"
+a. If you want to run the application locally, make sure all python libraries are installed. You can find them inside of the Dockerfile. Then run "python manage.py runserver 8002".
+
+b. If you want to run the application through Docker, have the daemon running, and call "docker build . -t django-app", then "docker run -p 8002:8002 django-app"
 
 Follow up, to prevent memory accumulation, clear unused images and containers
 5. You can modify any files while the server is up, and the server will reload and show new changes
