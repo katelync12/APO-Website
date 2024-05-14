@@ -8,7 +8,7 @@ function App() {
   // Function to fetch all students from Django backend
   const fetchStudents = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/students/');
+      const response = await fetch('http://localhost:8002/api/students/');
       if (!response.ok) {
         throw new Error('Failed to fetch students');
       }
@@ -22,7 +22,7 @@ function App() {
   // Function to insert a dummy student
   const insertDummyStudent = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/students/', {
+      const response = await fetch('http://localhost:8002/api/students/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ function App() {
   // Function to remove all students
   const removeAllStudents = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/students/', {
+      const response = await fetch('http://localhost:8002/api/students/', {
         method: 'DELETE',
       });
       if (!response.ok) {
