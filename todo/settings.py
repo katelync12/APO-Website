@@ -58,7 +58,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'reactapp/build'),
+            # os.path.join(BASE_DIR, 'reactapp/build'), #change this to use viteapp
+            os.path.join(BASE_DIR, 'viteapp/dist'),
+
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -125,9 +127,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/' #changed this from /static/ to /assets/ (assets is the static folder Vite generates when building)
 
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'reactapp/build/static'),
+    # os.path.join(BASE_DIR, 'reactapp/build/static'), #change this to use viteapp
+    os.path.join(BASE_DIR, 'viteapp/dist/assets'), 
 ]
