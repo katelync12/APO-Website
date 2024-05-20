@@ -14,7 +14,7 @@ python manage.py runserver 8002
 ```
 docker build . -t django-app
 ```
-then
+   then
 ```
 docker run -p 8002:8002 django-app
 ```
@@ -25,5 +25,5 @@ docker run -p 8002:8002 django-app
 ```
 npm run build
 ```
-Changes will be shown after this command is complete. You can call this while the Django server is running or not.
+   Changes will be shown after this command is complete. You can call this while the Django server is running or not.
 8. Before pushing, test to ensure your code compiles locally and through Docker. Add any additional pip installs to the Dockerfile 
