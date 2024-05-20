@@ -21,5 +21,9 @@ docker run -p 8002:8002 django-app
 
 5. Follow up, to prevent memory accumulation, and clear unused images and containers
 6. You can modify any files while the server is up, and the server will reload and show new changes
-7. If you modify something that is part of viteapp, go inside /viteapp/ and call "npm run build". Changes will be shown after this command is complete. You can call this while the Django server is running or not.
-8. Before pushing, test to make sure your code compiles locally and through Docker. Add any additional pip installs to the Dockerfile 
+7. If you modify something that is part of viteapp, go inside /viteapp/ and call
+```
+npm run build
+```
+Changes will be shown after this command is complete. You can call this while the Django server is running or not.
+8. Before pushing, test to ensure your code compiles locally and through Docker. Add any additional pip installs to the Dockerfile 
