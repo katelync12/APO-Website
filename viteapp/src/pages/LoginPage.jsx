@@ -1,4 +1,3 @@
-import React from "react";
 import { StockImg, APOTorchVivid } from "../assets";
 import { CustomButton } from "../components";
 
