@@ -23,6 +23,7 @@ venv
 .env.development.local
 .env.test.local
 .env.production.local
+env/*
 
 # Editor directories and files
 .vscode/*
