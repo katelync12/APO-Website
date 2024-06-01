@@ -3,7 +3,7 @@ import { CustomButton } from "../components";
 
 const LoginPage = () => {
   return (
-    <div className="flex w-screen h-screen bg-white-200">
+    <div className="flex w-screen h-screen">
       {/* Left Half */}
       <div className="sm:w-1/2 bg-white-200 sm:block hidden">
         <img
@@ -14,7 +14,7 @@ const LoginPage = () => {
       </div>
 
       {/* Right Half */}
-      <div className="px-2 w-full sm:w-1/2 flex sm:flex-col justify-center items-center h-full bg-white-200">
+      <div className="w-full sm:w-1/2 flex flex-col justify-center items-center h-full bg-white-200 px-10">
         {/* Logo */}
         <div className="absolute top-10">
           <img
