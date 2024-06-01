@@ -5,7 +5,7 @@ const LoginPage = () => {
   return (
     <div className="flex w-screen h-screen">
       {/* Left Half */}
-      <div className="w-1/2 bg-white-200 sm:block hidden">
+      <div className="sm:w-1/2 bg-white-200 sm:block hidden">
         <img
           src={StockImg}
           alt="Stock"
@@ -14,7 +14,7 @@ const LoginPage = () => {
       </div>
 
       {/* Right Half */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center h-full bg-white-200 px-10">
+      <div className="w-full sm:w-1/2 flex flex-col justify-center items-center h-full bg-white-200 px-6">
         {/* Logo */}
         <div className="absolute top-10">
           <img
@@ -104,6 +104,8 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+
+    
   );
 };
 
