@@ -1,12 +1,13 @@
 from django.db import models
 # Create your modelsfrom django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
-class User(AbstractUser):
-    first_name = models.CharField(max_length=50)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     middle_name = models.CharField(max_length=50, null=True, blank=True)
-    last_name = models.CharField(max_length=50)
     school_email = models.EmailField(unique=True)
     personal_email = models.EmailField(unique=True)
     discord_username = models.CharField(max_length=50)
@@ -19,21 +20,6 @@ class User(AbstractUser):
     membership = models.ForeignKey('Membership', on_delete=models.SET_NULL, null=True, blank=True)
     roles = models.ManyToManyField('Role')
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='apo_user_groups',  # Use a unique related_name
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='apo_user_permissions',  # Use a unique related_name
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
-    
 class Membership(models.Model):
     name = models.CharField(max_length=50, unique=True)
     requirements = models.ManyToManyField('Requirement')

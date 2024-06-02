@@ -29,7 +29,7 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
-
+CORS_ALLOW_CREDENTIALS = True
 INSTALLED_APPS = [
     'students_api',
     'django.contrib.admin',
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'phonenumber_field',
+    'rest_framework',
     'apo',
 ]
 
@@ -78,6 +79,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'todo.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # ...
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
