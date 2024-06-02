@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'phonenumber_field',
     'rest_framework',
+    'rest_framework.authtoken',
     'apo',
 ]
 

@@ -1,3 +1,3 @@
 import CustomButton from "./CustomButton";
-
-export { CustomButton };
+import PrivateRoute from "./PrivateRouter";
+export { CustomButton, PrivateRoute };
