@@ -28,4 +28,5 @@ urlpatterns = [
     re_path('signup', authentication_views.signup),
     re_path('login', authentication_views.login),
     re_path('test_token', authentication_views.test_token),
+    re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
 ]
