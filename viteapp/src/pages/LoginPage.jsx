@@ -28,7 +28,8 @@ const LoginPage = () => {
       .then(data => {
         localStorage.setItem('token', data.token);
         console.log("login success");
-        navigate('/success');
+        // navigate('/success');
+        navigate('/calendar')
       })
       .catch(error => {
         console.error("Authentication error: ", error);
