@@ -3,29 +3,39 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { MOCK_EVENTS } from "./event";
+import { NavBar } from "../components";
 
 const localizer = momentLocalizer(moment);
 
 function CalendarPage() {
-  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const uniqueColors = [...new Set(MOCK_EVENTS.map(event => event.color))];
+  const uniqueCategories = [...new Set(MOCK_EVENTS.map(event => event.category))];
 
-  const handleCheckboxChange = (color) => {
-    setSelectedColors(prev =>
-      prev.includes(color)
-        ? prev.filter(c => c !== color)
-        : [...prev, color]
+  const handleCheckboxChange = (category) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
     );
   };
 
+  const categoryColors = {
+    "Meeting": "#FF5733",
+    "Conference": "#33FF57",
+    "Personal": "#3357FF",
+    "Training": "#FF33A8",
+    "Celebration": "#A833FF",
+    "Workshop": "#FFD700",
+  };
+
   const filteredEvents = MOCK_EVENTS.filter(event =>
-    selectedColors.length === 0 || selectedColors.includes(event.color)
+    selectedCategories.length === 0 || selectedCategories.includes(event.category)
   ).map(event => ({
-    title: event.title,
+    title: !event.allDay ? `${moment(event.start).format('HH:mm')} - ${event.title}` : event.title,
     start: new Date(event.start),
     end: new Date(event.end),
-    color: event.color,
+    color: categoryColors[event.category],
     id: event.id,
   }));
 
@@ -35,22 +45,19 @@ function CalendarPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col items-center bg-white-200">
-      <div className="w-full max-w-4xl px-10 py-5">
-        <div>
-          <h1 className="text-black text-center">HI</h1>
-        </div>
-        <div className="flex justify-center mb-4">
-          {uniqueColors.map(color => (
-            <label key={color} className="flex items-center mx-2">
+      <NavBar />
+
+      <div className="w-full px-10 py-5">
+        <div className="flex justify-center mb-4 flex-wrap">
+          {uniqueCategories.map(category => (
+            <label key={category} className="checkbox-label" style={{ backgroundColor: categoryColors[category] }}>
               <input
                 type="checkbox"
-                checked={selectedColors.includes(color)}
-                onChange={() => handleCheckboxChange(color)}
+                checked={selectedCategories.includes(category)}
+                onChange={() => handleCheckboxChange(category)}
+                className="checkbox-input"
               />
-              <span
-                style={{ backgroundColor: color }}
-                className="w-4 h-4 inline-block ml-2"
-              ></span>
+              <span className="checkbox-text">{category}</span>
             </label>
           ))}
         </div>
@@ -70,24 +77,11 @@ function CalendarPage() {
             }}
             onSelectEvent={handleSelectEvent}
             views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+            showAllEvents={true}
           />
         </div>
       </div>
-      <style>{`
-        .checkbox-label {
-          display: flex;
-          align-items: center;
-          margin-right: 10px;
-        }
-        
-        .checkbox-color {
-          width: 15px;
-          height: 15px;
-          margin-left: 5px;
-          border-radius: 3px;
-          display: inline-block;
-        }
-
+      <style>{`      
         .App {
           text-align: center;
         }
@@ -107,8 +101,8 @@ function CalendarPage() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          font-size: calc(10px + 2vmin);
-          color: white;
+          font-size: 10px;
+          color: black;
         }
         .App-link {
           color: #61dafb;
@@ -119,11 +113,27 @@ function CalendarPage() {
         .rbc-label {
           color: black;
         }
+        .rbc-toolbar-label {
+          color: black;
+        }
         .rbc-header {
           color: black;
         }
-        .rbc-toolbar-label {
-          color: black;
+        .rbc-event {
+          font-size: 0.9em;
+          overflow-wrap: break-word !important;
+          word-wrap: break-word !important;
+        }
+        .rbc-event-content {
+          white-space: normal !important; /* Ensure text wraps */
+          font-size: 0.9em !important;
+          overflow-wrap: break-word !important;
+          word-wrap: break-word !important;
+        }
+        .rbc-row-content .rbc-event {
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+          font-size: 0.9em !important; /* Adjust the text size */
         }
         @keyframes App-logo-spin {
           from {
@@ -132,6 +142,23 @@ function CalendarPage() {
           to {
             transform: rotate(360deg);
           }
+        }
+        .checkbox-label {
+          display: flex;
+          align-items: center;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          padding: 5px;
+          border-radius: 5px;
+          cursor: pointer;
+          color: black;
+          white-space: nowrap; /* Prevent text from wrapping */
+        }
+        .checkbox-input {
+          margin-right: 10px;
+        }
+        .checkbox-text {
+          color: white;
         }
       `}</style>
     </div>

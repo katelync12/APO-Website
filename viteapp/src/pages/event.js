@@ -1,38 +1,77 @@
 export const MOCK_EVENTS = [
-    {
-      id: 1,
-      title: "Event 1",
-      start: "2024-06-15T08:31:38",
-      end: "2024-06-15T18:15:58",
-      description:
-        "Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.\n\nPraesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",
-      color: "#C97D60",
-    },
-    {
-      id: 2,
-      title: "Event 2",
-      start: "2024-06-15T13:30:02",
-      end: "2024-06-15T17:30:20",
-      description:
-        "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.\n\nIn hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\n\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
-      color: "green",
-    },
-    {
-      id: 3,
-      title: "Event 3",
-      start: "2024-06-13T10:53:12Z",
-      end: "2024-06-13T14:22:42Z",
-      description:
-        "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
-      color: "gray",
-    },
-    {
-      id: 4,
-      title: "Event 4",
-      start: "2024-06-14T12:49:36Z",
-      end: "2024-06-14T15:19:49Z",
-      description:
-        "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\nEtiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.\n\nPraesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",
-      color: "indigo",
-    },
-  ];
+  {
+    id: 1,
+    title: 'Team Meeting',
+    start: '2023-06-10T10:00:00',
+    end: '2023-06-10T11:00:00',
+    category: 'Meeting'
+  },
+  {
+    id: 2,
+    title: 'Project Workshop',
+    start: '2024-06-12T14:00:00',
+    end: '2024-06-12T16:00:00',
+    category: 'Workshop'
+  },
+  {
+    id: 3,
+    title: 'Annual Conference',
+    start: '2024-06-15T09:00:00',
+    end: '2024-06-15T17:00:00',
+    category: 'Conference'
+  },
+  {
+    id: 4,
+    title: 'Client Meeting',
+    start: '2024-06-17T11:00:00',
+    end: '2024-06-17T12:00:00',
+    category: 'Meeting'
+  },
+  {
+    id: 5,
+    title: 'Design Review',
+    start: '2024-06-22T13:00:00',
+    end: '2024-06-22T14:30:00',
+    category: 'Workshop'
+  },
+  {
+    id: 6,
+    title: 'Tech Expo',
+    start: '2024-06-22T10:00:00',
+    end: '2024-06-22T15:00:00',
+    category: 'Conference'
+  },
+  {
+    id: 7,
+    title: "Vacation",
+    start: "2024-06-12",
+    end: "2024-06-15",
+    category: "Personal",
+    allDay: true,
+  },
+  {
+    id: 8,
+    title: "Conference",
+    start: "2024-06-08",
+    end: "2024-06-10",
+    category: "Conference",
+    allDay: true,
+  },
+  {
+    id: 9,
+    title: "Party",
+    start: "2024-06-13",
+    end: "2024-06-15",
+    category: "Personal",
+    allDay: true,
+  },
+  {
+    id: 10,
+    title: "things",
+    start: "2024-06-13",
+    end: "2024-06-15",
+    category: "Conference",
+    allDay: true,
+  },
+  // Add more events as needed
+];
