@@ -7,7 +7,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />}></Route>
-        <Route path="/calendar" element={<CalenderPage />}></Route>
 
         <Route path="/event/create" element={<CreateEvent />}></Route>
         <Route path="/event/:id" element={<EventDetailsPage />}></Route>
