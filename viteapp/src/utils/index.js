@@ -1,2 +1,3 @@
 import { isAuthenticated } from "./auth";
-export { isAuthenticated };
+import { checkUserPermission } from "./perm_auth";
+export { isAuthenticated, checkUserPermission};
