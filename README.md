@@ -1,7 +1,8 @@
 # APO Website
 
 ### Architecture Overview
-The tech stack is React front end + Django back end + Postgres database. Our application will be a SPA (Single Page Application), so there will be one index.html and all page routing will be entirely in React. Django will act as a REST framework, where React can call http requests for information. They will both be hosted on the same ip and port for convenience. 
+
+The tech stack is React front end + Django back end + Postgres database. Our application will be a SPA (Single Page Application), so there will be one index.html and all page routing will be entirely in React. Django will act as a REST framework, where React can call http requests for information. They will both be hosted on the same ip and port for convenience.
 
 Page routes can be found in viteapp/src/App.jsx
 
@@ -12,7 +13,6 @@ Note: Page routes and Web API routes CANNOT have conflicting names
 Database model can be found in apo/models.py
 
 Django consists of one main “project” and a bunch of “apps” that are connected to the project. todo folder is where the main project is. the apo folder is an example of an app. theoretically, this is supposed to help organize our code into app submodules.
-
 
 ### How to get started
 
@@ -41,7 +41,7 @@ docker run -p 8002:8002 django-app
 7. If you modify something that is part of viteapp, go inside /viteapp/ and call
 
 ```
-npm run build
+v
 ```
 
 Changes will be shown after this command is complete. You can call this while the Django server is running or not.
