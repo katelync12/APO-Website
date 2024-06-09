@@ -9,6 +9,9 @@ Web API routes can be found in todo/urls.py
 
 Note: Page routes and Web API routes CANNOT have conflicting names
 
+Inside of the src/utils folder, you can find examples of react pages calling django methods. To do this, use  await fetch(`/URL_PATH_NAME`, {
+          method: 'GET',...
+
 Database model can be found in apo/models.py
 
 Django consists of one main “project” and a bunch of “apps” that are connected to the project. todo folder is where the main project is. the apo folder is an example of an app. theoretically, this is supposed to help organize our code into app submodules.
