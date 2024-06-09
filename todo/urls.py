@@ -29,4 +29,7 @@ urlpatterns = [
     re_path('login', authentication_views.login),
     re_path('test_token', authentication_views.test_token),
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
+    path('google-auth/', authentication_views.google_auth_redirect),
+    path("accounts/", include("allauth.urls")),
+    path("/", include("users.urls"))
 ]
