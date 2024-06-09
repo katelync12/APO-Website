@@ -11,8 +11,11 @@ export default {
       colors: {
         "royal-blue": "#0033ab",
         "royal-blue-700": "#00298a",
+        "royal-blue-800": "#002376",
         gold: "#f7b612",
         "pastel-white": "#fefae0",
+        "navy-blue": "#131826",
+        "navy-blue-600": "#0c1736",
         white: "#ffffff",
         // primary: "#e48c17",
         // secondary: "#aaa6c3", //f18112
