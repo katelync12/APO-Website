@@ -17,9 +17,17 @@ from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
 from students_api import views
+from django.urls import re_path
+from . import authentication_views
+
 
 urlpatterns = [
+    path('checkpermission', authentication_views.check_permission),
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
     path('api/students/', views.student, name='student-handler'),
+    path('signup', authentication_views.signup),
+    path('login', authentication_views.login),
+    path('test_token', authentication_views.test_token),
+    re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
 ]

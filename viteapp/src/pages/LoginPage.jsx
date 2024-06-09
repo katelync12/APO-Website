@@ -1,11 +1,45 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StockImg, APOTorchVivid } from "../assets";
 import { CustomButton } from "../components";
 
 const LoginPage = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("Logging in...");
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        localStorage.setItem('token', data.token);
+        console.log("login success");
+        navigate('/calender');
+      })
+      .catch(error => {
+        console.error("Authentication error: ", error);
+        setError("Invalid username or password");
+      });
+  };
+
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex w-screen h-screen">
       {/* Left Half */}
-      <div className="w-1/2 bg-white-200 sm:block hidden">
+      <div className="sm:w-1/2 bg-white-200 sm:block hidden">
         <img
           src={StockImg}
           alt="Stock"
@@ -14,7 +48,7 @@ const LoginPage = () => {
       </div>
 
       {/* Right Half */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center h-full bg-white-200">
+      <div className="w-full sm:w-1/2 flex flex-col justify-center items-center h-full bg-white-200 px-6">
         {/* Logo */}
         <div className="absolute top-10">
           <img
@@ -36,7 +70,7 @@ const LoginPage = () => {
           </div>
 
           {/* Login Form */}
-          <form className="w-full">
+          <form className="w-full" onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -49,6 +83,8 @@ const LoginPage = () => {
                 id="email"
                 className="w-full px-3 py-2 border text-gray-700 bg-white-300 border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter Your Email"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
 
@@ -64,16 +100,20 @@ const LoginPage = () => {
                 id="password"
                 className="w-full px-3 py-2 border text-gray-700 text-black-100 bg-white-300 border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter Your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
+            {error && <p className="mb-4 text-red-500">{error}</p>}
+
             <div className="flex flex-col items-center justify-between mt-8 mb-4">
-              <CustomButton
-                button_text={"Log In"}
-                link={"#login"}
-                color_styles={"bg-royal-blue text-white"}
-                hover_color={"hover:bg-royal-blue-700"}
-              />
+              <button
+                type="submit"
+                className="w-full px-3 py-2 bg-royal-blue text-white rounded-lg hover:bg-royal-blue-700"
+              >
+                Log In
+              </button>
               <a
                 href="#"
                 className="text-sm text-royal-blue hover:text-blue-600 underline"

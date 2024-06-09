@@ -1,3 +1,5 @@
 import CustomButton from "./CustomButton";
-
-export { CustomButton };
+import PrivateRoute from "./PrivateRouter";
+import NavBar from "./NavBar";
+import PermissionRoute from "./PermissionRouter";
+export { CustomButton, PrivateRoute, NavBar, PermissionRoute};

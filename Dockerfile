@@ -1,12 +1,6 @@
 FROM python:3
-
-# Set the working directory in the container
-WORKDIR /
-
-# Install dependencies
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install Django==3.2.4 django-cors-headers python-decouple django-pgtrigger django-user-agents djangorestframework
+RUN pip install psycopg2 psycopg2-binary
 COPY . .
 
 ENV PYTHONUNBUFFERED=1
