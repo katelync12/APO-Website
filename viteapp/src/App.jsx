@@ -17,7 +17,7 @@ function App() {
         <Route path="/protected" element={<PermissionRoute permission="auth.default" element={<CalenderPage />} />} />
 
         <Route path="/success" element={<PrivateRoute element={<SuccessPage />} />} />
-        <Route path="/calender" element={<PrivateRoute element={<CalenderPage />} />} />
+        <Route path="/calendar" element={<PrivateRoute element={<CalenderPage />} />} />
         <Route path="/permissionerror" element={<PermissionError />}></Route>
         <Route path="*" element={<ErrorPage />}></Route>
       </Routes>
