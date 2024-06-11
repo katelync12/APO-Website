@@ -24,6 +24,7 @@ function Profile() {
 
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [phoneError, setPhoneError] = useState(""); // State to hold phone number error message
 
   useEffect(() => {
     // Fetch profile data from the backend
@@ -61,6 +62,16 @@ function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate phone number length and digits only
+    const phoneNumberPattern = /^\d{10}$/;
+    if (!phoneNumberPattern.test(profile.phoneNumber)) {
+      setPhoneError("Phone number must be exactly 10 digits and contain only numbers.");
+      return;
+    } else {
+      setPhoneError("");
+    }
+
     // Create form data to send to the backend
     const formData = new FormData();
     for (const key in profile) {
@@ -197,6 +208,9 @@ function Profile() {
                 className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-white"
                 required
               />
+              {phoneError && (
+                <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+              )}
             </div>
 
             <div className="w-full md:w-1/2 px-2 mb-4">
