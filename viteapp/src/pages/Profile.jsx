@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { NavBar } from "../components";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Profile() {
-    const [profile, setProfile] = useState({
-        firstName: "",
-        preferredName: "",
-        middleName: "",
-        lastName: "",
-        schoolEmail: "",
-        personalEmail: "",
-        discordUsername: "",
-        phoneNumber: "",
-        birthday: "",
-        pronouns: "",
-        dietaryRestrictions: "",
-        additionalInfo: "",
-        profilePicture: null,
-        pledgeClass: "",
-        password: "" // Add the password field to your profile state
-        });
+  const [profile, setProfile] = useState({
+    firstName: "",
+    preferredName: "",
+    middleName: "",
+    lastName: "",
+    schoolEmail: "",
+    personalEmail: "",
+    discordUsername: "",
+    phoneNumber: "",
+    birthday: "",
+    pronouns: "",
+    dietaryRestrictions: "",
+    additionalInfo: "",
+    profilePicture: null,
+    pledgeClass: "",
+    password: "", // Add the password field to your profile state
+  });
 
-        const [profilePicturePreview, setProfilePicturePreview] = useState(null);
-        const [showPassword, setShowPassword] = useState(false);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     // Fetch profile data from the backend
@@ -41,7 +42,7 @@ function Profile() {
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-  
+
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     setProfile({ ...profile, profilePicture: file });
@@ -162,62 +163,28 @@ function Profile() {
             </div>
 
             <div className="w-full md:w-1/2 px-2 mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                Password <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
+              <label className="block text-sm font-medium text-gray-700">Password <span className="text-red-500">*</span></label>
+              <div className="relative">
                 <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={profile.password}
-                    onChange={handleChange}
-                    className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-white"
-                    required
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={profile.password}
+                  onChange={handleChange}
+                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-white pr-10"
+                  required
                 />
                 <button
-                    type="button"
-                    onClick={handleTogglePassword}
-                    className="absolute inset-y-0 right-0 px-2 focus:outline-none"
+                  type="button"
+                  onClick={handleTogglePassword}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 bg-transparent border-none cursor-pointer"
                 >
-                    {showPassword ? (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-gray-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                    ) : (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-gray-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 14V6a2 2 0 012-2h2a2 2 0 012 2v8m0 0h0"
-                        />
-                    </svg>
-                    )}
+                  {showPassword ? (
+                    <FaEyeSlash className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    <FaEye className="h-5 w-5 text-gray-500" />
+                  )}
                 </button>
-                </div>
+              </div>
             </div>
 
             <div className="w-full md:w-1/2 px-2 mb-4">
