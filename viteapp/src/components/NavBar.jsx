@@ -101,7 +101,7 @@ const NavBar = () => {
             <li className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-navy-blue md:hover:bg-transparent md:border-0 md:hover:text-gold md:p-0 md:w-auto dark:text-white md:dark:hover:text-gold dark:focus:text-white dark:hover:bg-navy-blue dark:bg-navy-blue md:dark:hover:bg-transparent"
+                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-navy-blue md:hover:bg-transparent md:border-0 md:hover:text-gold md:p-0 md:w-auto dark:text-white md:dark:hover:text-gold dark:focus:text-gold md:dark:focus:text-gold dark:hover:bg-navy-blue dark:bg-navy-blue dark:hover:text-gold md:dark:hover:bg-transparent"
               >
                 Account
                 <svg
