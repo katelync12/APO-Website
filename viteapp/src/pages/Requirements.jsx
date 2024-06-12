@@ -19,7 +19,7 @@ const requirements = {
     },
     finance: {
       description: "Finance Requirements",
-      totalProjects: 1.5,
+      totalProjects: 2,
       progress: 1,
       subRequirements: [
         { description: "Chapter fundraiser project", total: 1, completed: 10.5 },
@@ -98,12 +98,9 @@ function Requirements() {
         body {
           overflow-x: hidden;
         }
-        div {
-            overflow-x: hidden;
-          }
       `}</style>
       <NavBar />
-      <div className="flex-grow w-full flex flex-col items-center justify-center p-4">
+      <div className="flex-grow w-full flex flex-col items-center justify-center p-4 overflow-x-hidden">
         <h1 className="text-2xl font-bold mb-8">Requirements</h1>
         {renderRequirements()}
       </div>

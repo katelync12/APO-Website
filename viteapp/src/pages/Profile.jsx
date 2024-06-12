@@ -99,7 +99,7 @@ function Profile() {
       `}</style>
       <NavBar />
       <div className="flex-grow w-screen mx-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
-        <form onSubmit={handleSubmit} className="w-full max-w-4xl bg-gray-200 p-8 rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden">
           <h2 className="text-2xl font-bold mb-4">Profile</h2>
 
           <div className="flex flex-wrap -mx-2 mb-4">
