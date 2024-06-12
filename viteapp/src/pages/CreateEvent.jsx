@@ -39,9 +39,6 @@ function CreateEvent() {
         body {
           overflow-x: hidden;
         }
-        div {
-          overflow-x: hidden;
-        }
         .input-placeholder::placeholder {
           color: rgba(55, 65, 81, 0.7); /* Slightly darker placeholder color */
         }
