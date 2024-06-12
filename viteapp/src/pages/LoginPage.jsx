@@ -37,11 +37,6 @@ const LoginPage = () => {
       });
   };
 
-  function handleGoogleSignIn() {
-    // Replace with your actual domain and URL pattern
-    const googleAuthUrl = 'https:localhost:8002/google-auth/';
-    window.location.href = googleAuthUrl;
-  }
   return (
     <div className="flex w-screen h-screen">
       {/* Left Half */}
@@ -138,9 +133,7 @@ const LoginPage = () => {
             {/* Sign Up Button */}
             <CustomButton
               button_text={"Sign in with Google"}
-              onSubmit={
-                handleGoogleSignIn()
-              }
+              link={"/accounts/google/login/"}
               color_styles={
                 "bg-gray-100 text-royal-blue bg-gray-100 border-gray-300"
               }

@@ -31,8 +31,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 CORS_ALLOW_CREDENTIALS = True
 
-SITE_ID = 1
-
+SITE_ID = 2
 
 INSTALLED_APPS = [
     'students_api',
@@ -72,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'todo.urls'
@@ -165,7 +165,7 @@ STATICFILES_DIRS = [
 
 AUTHENTICATION_BACKENDS = {
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.accounts.auth_backends.AuthenticationBackend"
+    "allauth.account.auth_backends.AuthenticationBackend",
 }
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"

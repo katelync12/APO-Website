@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -40,5 +40,7 @@ def login(request):
 def test_token(request):
     return Response("passed!")
 
-def google_auth_redirect(request):
-    return None
+
+# @api_view(['GET'])
+# def google_auth_redirect(request):
+#     return redirect('/accounts/google/login/')
