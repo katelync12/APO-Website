@@ -1,11 +1,13 @@
 # APO Website
+
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
 ## Architecture Overview
-The tech stack is React front-end + Django back-end + PostgreSQL database. Our application will be a SPA (Single Page Application), so there will be one index.html and all page routing will be entirely in React. Django will act as a REST framework, where React can call HTTP requests for information. They will both be hosted on the same IP and port for convenience. 
+
+The tech stack is React front-end + Django back-end + PostgreSQL database. Our application will be a SPA (Single Page Application), so there will be one index.html and all page routing will be entirely in React. Django will act as a REST framework, where React can call HTTP requests for information. They will both be hosted on the same IP and port for convenience.
 
 - Page routes can be found in viteapp/src/App.jsx
 
@@ -13,8 +15,8 @@ The tech stack is React front-end + Django back-end + PostgreSQL database. Our a
 
 Note: Page routes and Web API routes CANNOT have conflicting names
 
-- Inside of the src/utils folder, you can find examples of react pages calling django methods. To do this, use  await fetch(`/URL_PATH_NAME`, {
-          method: 'GET',...
+- Inside of the src/utils folder, you can find examples of react pages calling django methods. To do this, use await fetch(`/URL_PATH_NAME`, {
+  method: 'GET',...
 
 - Database model can be found in apo/models.py
 
@@ -47,11 +49,10 @@ docker run -p 8002:8002 django-app
 7. If you modify something that is part of viteapp, go inside /viteapp/ and call
 
 ```
-v
+python manage.py runserver 8002
 ```
 
-Changes will be shown after this command is complete. You can call this while the Django server is running or not.
-8. Before pushing, test to ensure your code compiles locally and through Docker. Add any additional pip installs to the Dockerfile
+Changes will be shown after this command is complete. You can call this while the Django server is running or not. 8. Before pushing, test to ensure your code compiles locally and through Docker. Add any additional pip installs to the Dockerfile
 
 ## Annoying Python Virtual Environment Stuff
 
