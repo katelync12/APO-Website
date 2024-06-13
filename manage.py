@@ -6,7 +6,10 @@ import subprocess
 
 def main():
     # Run npm build command first
-    npm_build = subprocess.Popen(["npm", "run", "build"], cwd="viteapp/")
+    if os.name == 'nt':
+        npm_build = subprocess.Popen(["npm", "run", "build"], cwd="viteapp/", shell=True)
+    else:
+        npm_build = subprocess.Popen(["npm", "run", "build"], cwd="viteapp/")
     npm_build.wait()  # Wait for npm build to finish
     
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'todo.settings')
