@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { MOCK_EVENTS } from "./event";
+import { MOCK_EVENTS } from "../constants/event";
 import { NavBar } from "../components";
 
 function EventDetailsPage() {
@@ -25,4 +25,3 @@ function EventDetailsPage() {
 }
 
 export default EventDetailsPage;
-
