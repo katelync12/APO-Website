@@ -32,18 +32,21 @@ const NavBar = () => {
   }, []);
 
   const navbarElementStyles =
-    "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-navy-blue dark:hover:text-white md:dark:hover:bg-transparent";
+    "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gold md:p-0 dark:text-white md:dark:hover:text-gold dark:hover:bg-navy-blue dark:hover:text-gold md:dark:hover:bg-transparent";
 
   const dropdownElementStyles =
-    "block px-4 py-2 text-white hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:hover:text-white";
+    "block px-4 py-2 text-white hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:hover:text-gold";
 
   const doubleDropdownElementStyles =
-    "block px-4 py-2 hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:text-gray-200 dark:hover:text-white";
+    "block px-4 py-2 hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:text-gray-200 dark:hover:text-gold";
 
   return (
     <nav className="border-gray-200 bg-navy-blue dark:bg-navy-blue dark:border-gray-700 w-full">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <a
+          href="/protected"
+          className="flex items-center space-x-3 rtl:space-x-reverse"
+        >
           <img src={APOBadge} className="h-8" alt="APO Online" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             APO Online
@@ -83,7 +86,7 @@ const NavBar = () => {
           <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-navy-blue md:dark:bg-navy-blue dark:border-gray-700">
             <li>
               <a
-                href="/"
+                href="/protected"
                 className={`${navbarElementStyles}`}
                 aria-current="page"
               >
@@ -98,7 +101,7 @@ const NavBar = () => {
             <li className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-navy-blue md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-navy-blue dark:bg-navy-blue md:dark:hover:bg-transparent"
+                className="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-navy-blue md:hover:bg-transparent md:border-0 md:hover:text-gold md:p-0 md:w-auto dark:text-white md:dark:hover:text-gold dark:focus:text-gold md:dark:focus:text-gold dark:hover:bg-navy-blue dark:bg-navy-blue dark:hover:text-gold md:dark:hover:bg-transparent"
               >
                 Account
                 <svg
@@ -137,7 +140,7 @@ const NavBar = () => {
                   <li className="relative">
                     <button
                       onClick={toggleDoubleDropdown}
-                      className="flex items-center justify-between w-full px-4 py-2 text-white  dark:bg-navy-blue hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:hover:text-white"
+                      className="flex items-center justify-between w-full px-4 py-2 text-white dark:bg-navy-blue hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:hover:text-gold"
                     >
                       My Account
                       <svg
@@ -219,8 +222,8 @@ const NavBar = () => {
                 </ul>
                 <div className="py-1">
                   <a
-                    href="/" // takes back to login page for now?
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:text-gray-200 dark:hover:text-white"
+                    href="/" // takes you back to login page for now?
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:text-gray-200 dark:hover:text-gold"
                   >
                     Sign out
                   </a>
