@@ -1,37 +1,36 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { StockImg, APOTorchVivid } from "../assets";
 import { CustomButton } from "../components";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Logging in...");
-    fetch('/login', {
-      method: 'POST',
+    fetch("/login", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then(data => {
-        localStorage.setItem('token', data.token);
+      .then((data) => {
+        localStorage.setItem("token", data.token);
         console.log("login success");
-        // navigate('/success');
-        navigate('/calendar')
+        navigate("/calendar");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Authentication error: ", error);
         setError("Invalid username or password");
       });
@@ -59,7 +58,7 @@ const LoginPage = () => {
           />
         </div>
         {/* Form Container */}
-        <div className="w-full max-w-lg mt-24 p-2 flex flex-col items-center">
+        <div className="w-full max-w-lg mt-12 md:mt-24 p-2 flex flex-col items-center">
           {/* Welcome Text */}
           <div className="w-full text-left">
             <h1 className="mb-4 text-4xl font-bold text-royal-blue">
@@ -117,7 +116,7 @@ const LoginPage = () => {
               </button>
               <a
                 href="#"
-                className="text-sm text-royal-blue hover:text-blue-600 underline"
+                className="text-sm text-royal-blue hover:text-blue-600 underline mt-4"
               >
                 Forgot password?
               </a>

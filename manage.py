@@ -2,9 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+import subprocess
 
 def main():
+    # Run npm build command first
+    npm_build = subprocess.Popen(["npm", "run", "build"], cwd="viteapp/")
+    npm_build.wait()  # Wait for npm build to finish
+    
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'todo.settings')
     try:
         from django.core.management import execute_from_command_line

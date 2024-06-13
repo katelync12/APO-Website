@@ -2,8 +2,7 @@ from django.db import models
 # Create your modelsfrom django.db import models
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
-
-
+from django.contrib.auth.models import Group
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -18,18 +17,10 @@ class UserProfile(models.Model):
     additional_info = models.TextField(null=True, blank=True)
     profile_picture = models.BinaryField()
     membership = models.ForeignKey('Membership', on_delete=models.SET_NULL, null=True, blank=True)
-    roles = models.ManyToManyField('Role')
 
 class Membership(models.Model):
     name = models.CharField(max_length=50, unique=True)
     requirements = models.ManyToManyField('Requirement')
-
-class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    permissions = models.ManyToManyField('Permission')
-
-class Permission(models.Model):
-    name = models.CharField(max_length=50, unique=True)
 
 class Location(models.Model):
     street_num = models.IntegerField()

@@ -19,7 +19,7 @@ const PrivateRoute = ({ element: Component }) => {
     return <div>Loading...</div>;
   }
 
-  return auth ? Component : <Navigate to="/login" />;
+  return auth ? Component : <Navigate to="/" />;
 };
 
 PrivateRoute.propTypes = {
