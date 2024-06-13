@@ -15,3 +15,6 @@ Content-Type: application/json
 GET http://127.0.0.1:8000/test_token 
 Content-Type: application/json
 Authorization: token 60ff844e0628d4f0954199389f97474449fa7a15
+
+POST http://127.0.0.1:8000/accounts/google/login/
+Content-Type: application/json

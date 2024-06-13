@@ -30,6 +30,9 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 CORS_ALLOW_CREDENTIALS = True
+
+SITE_ID = 2
+
 INSTALLED_APPS = [
     'students_api',
     'django.contrib.admin',
@@ -43,8 +46,22 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'apo',
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
 
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    }
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'todo.urls'
@@ -144,3 +162,10 @@ STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'reactapp/build/static'), #change this to use viteapp
     os.path.join(BASE_DIR, 'viteapp/dist/assets'), 
 ]
+
+AUTHENTICATION_BACKENDS = {
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+}
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

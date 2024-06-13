@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+# Create your views here.
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -80,3 +82,7 @@ def check_permission(request):
     else:
         print("User does not have the permission.")
         return Response({'detail': 'User does not have the permission.'}, status=403)
+
+# @api_view(['GET'])
+# def google_auth_redirect(request):
+#     return redirect('/accounts/google/login/')

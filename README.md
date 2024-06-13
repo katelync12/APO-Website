@@ -20,7 +20,6 @@ Note: Page routes and Web API routes CANNOT have conflicting names
 
 Django consists of one main “project” and a bunch of “apps” that are connected to the project. todo/ folder is where the main project is. the apo/ folder is an example of an app. Theoretically, this is supposed to help organize our code into app submodules.
 
-
 ### How to get started
 
 1. Put the .env file inside of the todo folder. The todo folder is the main project folder for Django. This .env file contains information about database connection and is required for the project to run.
@@ -48,7 +47,7 @@ docker run -p 8002:8002 django-app
 7. If you modify something that is part of viteapp, go inside /viteapp/ and call
 
 ```
-npm run build
+v
 ```
 
 Changes will be shown after this command is complete. You can call this while the Django server is running or not.

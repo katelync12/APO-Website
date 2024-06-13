@@ -132,7 +132,7 @@ const LoginPage = () => {
             {/* Sign Up Button */}
             <CustomButton
               button_text={"Sign in with Google"}
-              link={"#signingoogle"}
+              link={"/accounts/google/login/"}
               color_styles={
                 "bg-gray-100 text-royal-blue bg-gray-100 border-gray-300"
               }
