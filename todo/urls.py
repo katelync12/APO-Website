@@ -22,14 +22,14 @@ from . import authentication_views
 from django.conf.urls import include
 
 urlpatterns = [
-    path('checkpermission', authentication_views.check_permission),
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
     path('api/students/', views.student, name='student-handler'),
+    path('api/checkpermission', authentication_views.check_permission),
     path("accounts/", include("allauth.urls")),
-    re_path('signup', authentication_views.signup),
-    re_path('login', authentication_views.login),
-    re_path('test_token', authentication_views.test_token),
+    re_path('api/signup', authentication_views.signup),
+    re_path('api/login', authentication_views.login),
+    re_path('api/test_token', authentication_views.test_token),
     # path('google-auth/', authentication_views.google_auth_redirect),
     #This acts as a catch-all
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),

@@ -7,7 +7,7 @@ export const isAuthenticated = async () => {
     return false;
   }
   try {
-      const response = await fetch('/test_token', {
+      const response = await fetch('/api/test_token', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',

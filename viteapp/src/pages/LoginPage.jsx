@@ -12,7 +12,7 @@ const LoginPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Logging in...");
-    fetch("/login", {
+    fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -6,7 +6,7 @@ export const checkUserPermission = async (permission) => {
   }
 
   try {
-      const response = await fetch(`/checkpermission?permission=${permission}`, {
+      const response = await fetch(`/api/checkpermission?permission=${permission}`, {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',
