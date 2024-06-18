@@ -2,10 +2,7 @@
 export const isAuthenticated = async () => {
   const token = localStorage.getItem('token');
   console.log("Token: ", token)
-  if (!token) {
-    console.log("Token empty")
-    return false;
-  }
+  
   try {
       const response = await fetch('/api/test_token', {
           method: 'GET',

@@ -24,7 +24,7 @@ SECRET_KEY = 'ib855caai4($%5b3j($-d^ltrj@av234wa0#op&ban_h9y-7$6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+SOCIALACCOUNT_STORE_TOKENS = True
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -99,10 +99,14 @@ WSGI_APPLICATION = 'django-main.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     # ...
-}
+} 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
     path('api/checkpermission', authentication_views.check_permission),
+    path('accounts/profile/', authentication_views.profile),
     path("accounts/", include("allauth.urls")),
     re_path('api/signup', authentication_views.signup),
     re_path('api/login', authentication_views.login),
