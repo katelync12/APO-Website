@@ -4,7 +4,7 @@ import { StockImg, APOTorchVivid } from "../assets";
 import { CustomButton } from "../components";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const LoginPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -32,7 +32,7 @@ const LoginPage = () => {
       })
       .catch((error) => {
         console.error("Authentication error: ", error);
-        setError("Invalid username or password");
+        setError("Invalid email or password");
       });
   };
 
@@ -83,8 +83,8 @@ const LoginPage = () => {
                 id="email"
                 className="w-full px-3 py-2 border text-gray-700 bg-white-300 border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter Your Email"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
