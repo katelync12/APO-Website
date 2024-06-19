@@ -11,7 +11,7 @@ The tech stack is React front-end + Django back-end + PostgreSQL database. Our a
 
 - Page routes can be found in viteapp/src/App.jsx
 
-- Web API routes can be found in todo/urls.py
+- Web API routes can be found in django-main/urls.py
 
 Note: Page routes and Web API routes CANNOT have conflicting names
 
@@ -20,11 +20,11 @@ Note: Page routes and Web API routes CANNOT have conflicting names
 
 - Database model can be found in apo/models.py
 
-Django consists of one main “project” and a bunch of “apps” that are connected to the project. todo/ folder is where the main project is. the apo/ folder is an example of an app. Theoretically, this is supposed to help organize our code into app submodules.
+Django consists of one main “project” and a bunch of “apps” that are connected to the project. django-main/ folder is where the main project is. the apo/ folder is an example of an app. Theoretically, this is supposed to help organize our code into app submodules.
 
 ### How to get started
 
-1. Put the .env file inside of the todo folder. The todo folder is the main project folder for Django. This .env file contains information about database connection and is required for the project to run.
+1. Put the .env file inside of the django-main folder. The django-main folder is the main project folder for Django. This .env file contains information about database connection and is required for the project to run.
 2. Have npm, pip on your computer. Use Django 3.2.4, as higher versions no longer support Postgres version 10.
 3. If you want to run the application locally, make sure all Python libraries are installed. You can find them inside the Dockerfile. Then run
 
