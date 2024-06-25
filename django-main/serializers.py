@@ -32,7 +32,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'start_time', 'end_time', 'location', 'signups_lock_time', 'signups_close_time', 'shifts']
+        fields = ['title', 'description', 'start_time', 'end_time', 'location', 'signups_lock_time', 'signups_close_time']
 
     def create(self, validated_data):
         shifts_data = validated_data.pop('shifts')
