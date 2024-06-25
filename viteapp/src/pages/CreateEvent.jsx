@@ -30,6 +30,28 @@ function CreateEvent() {
     event.preventDefault();
     // Add form validation here
     // Add logic to create/edit/delete event
+    console.log("Creating Event...");
+    fetch("/api/createEvent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, 
+        dateTimeRange,
+        location,
+        requirementCredit,
+        additionalInfo,
+        signUpStart,
+        signUpEnd,
+        lockDate,
+        coordinator,
+        showSignUpList,
+        inviteGroups,
+        isGroupEvent,
+        attachedFiles,
+        shifts
+       }),
+    })
     alert("Event created!");
   };
 
