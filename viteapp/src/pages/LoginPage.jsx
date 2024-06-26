@@ -32,7 +32,7 @@ const LoginPage = () => {
       })
       .catch((error) => {
         console.error("Authentication error: ", error);
-        setError("Invalid username or password");
+        setError("Invalid email or password");
       });
   };
 
