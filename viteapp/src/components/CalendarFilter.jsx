@@ -44,7 +44,9 @@ const CalendarFilter = ({
           padding: ${isMobile ? "0.2rem" : "0.5rem"} 0;
           margin-bottom: 10px;
           align-items: center;
-          justify-content: flex-start; /* Align items from left to right */
+          justify-content: ${
+            isMobile ? "flex-start" : "center"
+          }; /* Align items from left to right */
         }
 
         .checkbox-label {

@@ -63,9 +63,9 @@ function CalendarPage() {
     <div className="h-screen w-screen flex flex-col items-center bg-white-200">
       <NavBar />
 
-      <div className="w-full px-10 py-5">
+      <div className="flex flex-col justify-center w-full px-10 py-5">
         {/* Calendar Filters */}
-        <div className="flex justify-center w-full">
+        <div className="flex w-full">
           <CalendarFilter
             uniqueCategories={uniqueCategories}
             selectedCategories={selectedCategories}
