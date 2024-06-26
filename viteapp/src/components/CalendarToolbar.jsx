@@ -63,7 +63,7 @@ const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
   return (
     <div className="rbc-toolbar w-full flex items-center justify-between">
       {isMobile ? (
-        <div className="mobile-controls flex items-center space-x-4">
+        <div className="mobile-controls w-full flex items-center space-x-4">
           {/* Navigator: Back Today Next */}
           <div className="flex items-center justify-center">
             <button
@@ -87,7 +87,7 @@ const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
           </div>
 
           {/* Toolbar Label */}
-          <span className="rbc-toolbar-label text-center flex-1 min-w-[5.5em] max-w-[14.5em]">
+          <span className="rbc-toolbar-label text-center flex-1 min-w-[4.5em] max-w-[18.5em]">
             {getToolbarLabel()}
           </span>
 
