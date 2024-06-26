@@ -3,34 +3,62 @@ import { NavBar } from "../components";
 
 function CreateEvent() {
   const [title, setTitle] = useState("");
-  const [dateTimeRange, setDateTimeRange] = useState({ start: "", end: "" });
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [description, setDescription] = useState("");
+  const [signupLock, setSignupLock] = useState("");
+  const [signupClose, setSignupClose] = useState("");
+  const [eventCoordinator, setEventCoordinator] = useState("");
   const [location, setLocation] = useState("");
-  const [requirementCredit, setRequirementCredit] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [signUpStart, setSignUpStart] = useState("");
-  const [signUpEnd, setSignUpEnd] = useState("");
-  const [lockDate, setLockDate] = useState("");
-  const [coordinator, setCoordinator] = useState("");
-  const [showSignUpList, setShowSignUpList] = useState(false);
-  const [inviteGroups, setInviteGroups] = useState([]);
-  const [isGroupEvent, setIsGroupEvent] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState(null);
-  const [shifts, setShifts] = useState([{ start: "", end: "" }]);
+  const [categories, setCategories] = useState([]);
+  const [repeat, setRepeat] = useState(false);
+  const [repeatDays, setRepeatDays] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([{ date: "", startTime: "", endTime: "" }]);
+  const [allDayEvent, setAllDayEvent] = useState(false);
+  const [events, setEvents] = useState([]);
 
-  const handleAddShift = () => {
-    setShifts([...shifts, { start: "", end: "" }]);
+  const handleRepeatChange = (day) => {
+    setRepeatDays((prevDays) =>
+      prevDays.includes(day)
+        ? prevDays.filter((d) => d !== day)
+        : [...prevDays, day]
+    );
   };
 
-  const handleRemoveShift = (index) => {
-    const newShifts = shifts.filter((_, i) => i !== index);
-    setShifts(newShifts);
+  const handleAddTimeSlot = () => {
+    setTimeSlots([...timeSlots, { date: "", startTime: "", endTime: "" }]);
+  };
+
+  const handleRemoveTimeSlot = (index) => {
+    setTimeSlots(timeSlots.filter((_, i) => i !== index));
+  };
+
+  const handleTimeSlotChange = (index, field, value) => {
+    const newTimeSlots = timeSlots.slice();
+    newTimeSlots[index][field] = value;
+    setTimeSlots(newTimeSlots);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Add form validation here
-    // Add logic to create/edit/delete event
-    alert("Event created!");
+    const newEvents = timeSlots.map(slot => ({
+      title,
+      date: slot.date,
+      startTime: allDayEvent ? "" : slot.startTime,
+      endTime: allDayEvent ? "" : slot.endTime,
+      description,
+      signupLock,
+      signupClose,
+      eventCoordinator,
+      location,
+      categories,
+    }));
+    setEvents([...events, ...newEvents]);
+
+    // Add form validation and logic to create/edit/delete event in the backend here
+
+    alert("Event(s) created!");
   };
 
   return (
@@ -71,21 +99,48 @@ function CreateEvent() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Date/Time Range</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+              placeholder="Description"
+              required
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up Lock Date</label>
             <input
               type="datetime-local"
-              value={dateTimeRange.start}
-              onChange={(e) => setDateTimeRange({ ...dateTimeRange, start: e.target.value })}
+              value={signupLock}
+              onChange={(e) => setSignupLock(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Start Date/Time"
+              placeholder="Sign-up Lock Date"
               required
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up Close Date</label>
             <input
               type="datetime-local"
-              value={dateTimeRange.end}
-              onChange={(e) => setDateTimeRange({ ...dateTimeRange, end: e.target.value })}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
-              placeholder="End Date/Time"
+              value={signupClose}
+              onChange={(e) => setSignupClose(e.target.value)}
+              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+              placeholder="Sign-up Close Date"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Event Coordinator</label>
+            <input
+              type="text"
+              value={eventCoordinator}
+              onChange={(e) => setEventCoordinator(e.target.value)}
+              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+              placeholder="Event Coordinator"
               required
             />
           </div>
@@ -103,159 +158,104 @@ function CreateEvent() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Requirement Credit</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Categories</label>
             <input
               type="text"
-              value={requirementCredit}
-              onChange={(e) => setRequirementCredit(e.target.value)}
+              value={categories.join(", ")}
+              onChange={(e) => setCategories(e.target.value.split(",").map(cat => cat.trim()))}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Requirement Credit"
+              placeholder="Categories (comma separated)"
+              required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Additional Information</label>
-            <textarea
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Additional Information"
-            ></textarea>
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up Start Date</label>
-            <input
-              type="datetime-local"
-              value={signUpStart}
-              onChange={(e) => setSignUpStart(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Sign-up Start Date"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up End Date</label>
-            <input
-              type="datetime-local"
-              value={signUpEnd}
-              onChange={(e) => setSignUpEnd(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Sign-up End Date"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Lock Date</label>
-            <input
-              type="datetime-local"
-              value={lockDate}
-              onChange={(e) => setLockDate(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Lock Date"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Coordinator</label>
-            <input
-              type="text"
-              value={coordinator}
-              onChange={(e) => setCoordinator(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Event Coordinator"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Show Sign-up List</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">All Day Event</label>
             <input
               type="checkbox"
-              checked={showSignUpList}
-              onChange={(e) => setShowSignUpList(e.target.checked)}
+              checked={allDayEvent}
+              onChange={(e) => setAllDayEvent(e.target.checked)}
               className="mr-2 leading-tight"
             />
             <span>Yes</span>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Invite Groups</label>
-            <input
-              type="text"
-              value={inviteGroups.join(", ")}
-              onChange={(e) => setInviteGroups(e.target.value.split(",").map(group => group.trim()))}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Invite Groups (comma separated)"
-            />
-          </div>
+          {timeSlots.map((slot, index) => (
+            <div key={index} className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Date</label>
+              <input
+                type="date"
+                value={slot.date}
+                onChange={(e) => handleTimeSlotChange(index, "date", e.target.value)}
+                className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                placeholder="Event Date"
+                required
+              />
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Is Group Event</label>
-            <input
-              type="checkbox"
-              checked={isGroupEvent}
-              onChange={(e) => setIsGroupEvent(e.target.checked)}
-              className="mr-2 leading-tight"
-            />
-            <span>Yes</span>
-          </div>
+              {!allDayEvent && (
+                <>
+                  <div className="mb-2">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
+                    <input
+                      type="datetime-local"
+                      value={slot.startTime}
+                      onChange={(e) => handleTimeSlotChange(index, "startTime", e.target.value)}
+                      className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                      placeholder="Start Time"
+                      required
+                    />
+                  </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Attach Files</label>
-            <input
-              type="file"
-              onChange={(e) => setAttachedFiles(e.target.files)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-            />
-          </div>
+                  <div className="mb-2">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">End Time</label>
+                    <input
+                      type="datetime-local"
+                      value={slot.endTime}
+                      onChange={(e) => handleTimeSlotChange(index, "endTime", e.target.value)}
+                      className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                      placeholder="End Time"
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
-          <div className="mb-4">
-            <h2 className="text-lg font-bold mb-2">Shifts</h2>
-            {shifts.map((shift, index) => (
-              <div key={index} className="mb-2 flex flex-col">
-                <input
-                  type="datetime-local"
-                  value={shift.start}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].start = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-                  placeholder="Shift Start"
-                  required
-                />
-                <input
-                  type="datetime-local"
-                  value={shift.end}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].end = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
-                  placeholder="Shift End"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveShift(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded mt-2"
-                >
-                  Remove Shift
-                </button>
-              </div>
-            ))}
-            <div className="center-button">
               <button
                 type="button"
-                onClick={handleAddShift}
-                className="bg-green-500 text-white px-4 py-2 rounded mt-2"
+                onClick={() => handleRemoveTimeSlot(index)}
+                className="bg-red-500 text-white px-4 py-2 rounded"
               >
-                Add Shift
+                Remove Time Slot
               </button>
             </div>
-          </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={handleAddTimeSlot}
+            className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+          >
+            Add Another Time Slot
+          </button>
+
+          {repeat && (
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Repeat on:</label>
+              <div className="flex flex-wrap">
+                {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+                  <label key={day} className="block text-gray-700 text-sm font-bold mb-2 mr-4">
+                    <input
+                      type="checkbox"
+                      value={day}
+                      onChange={() => handleRepeatChange(day)}
+                      className="mr-2 leading-tight"
+                    />
+                    {day}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="center-button">
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">

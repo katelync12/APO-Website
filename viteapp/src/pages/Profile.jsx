@@ -19,16 +19,15 @@ function Profile() {
     additionalInfo: "",
     profilePicture: null,
     pledgeClass: "",
-    password: "", // Add the password field to your profile state
+    password: "",
   });
 
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [phoneError, setPhoneError] = useState(""); // State to hold phone number error message
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
-    // Fetch profile data from the backend
-    axios.get("/api/profiles/1/")  // Replace with actual user ID or endpoint
+    axios.get('/api/profile/')
       .then(response => {
         setProfile(response.data);
         if (response.data.profilePicture) {
@@ -63,7 +62,6 @@ function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate phone number length and digits only
     const phoneNumberPattern = /^\d{10}$/;
     if (!phoneNumberPattern.test(profile.phoneNumber)) {
       setPhoneError("Phone number must be exactly 10 digits and contain only numbers.");
@@ -72,7 +70,6 @@ function Profile() {
       setPhoneError("");
     }
 
-    // Create form data to send to the backend
     const formData = new FormData();
     for (const key in profile) {
       formData.append(key, profile[key]);
@@ -81,7 +78,7 @@ function Profile() {
       formData.append("profilePicture", profile.profilePicture);
     }
 
-    axios.put("/api/profiles/1/", formData)  // Replace with actual user ID or endpoint
+    axios.put("/api/update_profile/", formData)
       .then(response => {
         console.log("Profile updated successfully", response.data);
       })

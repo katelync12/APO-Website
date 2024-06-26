@@ -26,6 +26,9 @@ function CreateAccount() {
   // Define pledge class options
   const pledgeClassOptions = ["One", "Two", "Three"];
 
+  const addPledgeClass = (event) => {
+    return;
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -46,7 +49,7 @@ function CreateAccount() {
 
     // Create account with email, role, and pledge class (if applicable)
     axios
-      .post("/create_account/", { email, role, pledgeClass })
+      .post("/api/create_account/", { email, role, pledgeClass })
       .then((response) => {
         setSuccess("Account created successfully.");
         setError("");
@@ -61,17 +64,17 @@ function CreateAccount() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-white text-black overflow-x-hidden">
+    <div className="w-screen h-auto flex flex-col bg-white text-black overflow-x-hidden">
       <style>{`
         body {
           overflow-x: hidden;
         }
       `}</style>
       <NavBar />
-      <div className="flex-grow w-screen mx-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
+      <div className="flex-grow w-screen h-auto mx-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-lg bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden"
+          className="w-full max-w-lg bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden h-auto"
         >
           <h2 className="text-2xl font-bold mb-4">Create Account</h2>
 
@@ -133,6 +136,26 @@ function CreateAccount() {
             </div>
           )}
 
+          
+          <div className="justify-center items-center text-center flex flex-col pb-4">
+            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {success && <p className="text-green-500 text-sm mt-1">{success}</p>}
+          </div>
+        
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-royal-blue text-white font-semibold rounded-md hover:bg-royal-blue-700"
+          >
+            Create Account
+          </button>
+        </form>
+      </div>
+      <div className="flex-grow w-screen mx-auto h-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
+        <form
+          onSubmit={addPledgeClass}
+          className="w-full max-w-lg bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden"
+        >
           {/* Create New Pledge Class section */}
           <div className="mb-4">
             <hr className="my-4" />
@@ -149,18 +172,32 @@ function CreateAccount() {
               // Add any additional handlers or attributes as needed
             />
           </div>
-
-          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-          {success && <p className="text-green-500 text-sm mt-1">{success}</p>}
-
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-royal-blue text-white font-semibold rounded-md hover:bg-royal-blue-700"
-          >
-            Create Account
-          </button>
         </form>
       </div>
+      <div className="flex-grow w-screen mx-auto h-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
+        <form
+          onSubmit={addPledgeClass}
+          className="w-full max-w-lg bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden"
+        >
+          {/* Create New Pledge Class section */}
+          <div className="mb-4">
+            <hr className="my-4" />
+            <label className="block text-sm font-medium text-gray-700">
+              Create New Pledge Class
+            </label>
+            <input
+              type="text"
+              name="newPledgeClass"
+              value={newPledgeClassName}
+              onChange={(e) => setNewPledgeClassName(e.target.value)}
+              placeholder="Enter new pledge class name"
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md bg-white"
+              // Add any additional handlers or attributes as needed
+            />
+          </div>
+        </form>
+      </div>
+
     </div>
   );
 }
