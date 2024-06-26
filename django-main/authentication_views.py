@@ -15,9 +15,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token # type: ignore
 from .serializers import UserSerializer
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt
+
+#The username and email field MUST match
 @api_view(['POST'])
 def signup(request):
     serializer = UserSerializer(data=request.data)
@@ -31,9 +30,10 @@ def signup(request):
         return Response({'token': token.key, 'user': serializer.data})
     return Response(serializer.errors, status=status.HTTP_200_OK)
 
-@csrf_exempt
 @api_view(['POST'])
 def login(request):
+    print('login')
+    print(request.data['email'])
     user = get_object_or_404(User, email=request.data['email'])
     if not user.check_password(request.data['password']):
         return Response("missing user", status=status.HTTP_404_NOT_FOUND)
@@ -58,21 +58,12 @@ def get_or_create_default_group():
         group.permissions.add(permission)
 
     return group
-def profile(request):
-    print(request.user.username)
-    print(request.user.is_authenticated)
-    return Response({'username': request.user.username, 'email': request.user.email}) 
+
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def test_token(request):
-    print(request.user)
-    if request.user.is_authenticated:
-        # User is authenticated
-        print("User is authenticated")
-        return Response({'status': 'ok'})
-    else:
-        print("User is not authenticated")
-        # User is not authenticated
-        return Response({'status': 'error', 'message': 'User ifefewefs not authenticated'}, status=401)
+    print(request.user.username)
     return Response("passed!")
 
 @api_view(['GET'])
