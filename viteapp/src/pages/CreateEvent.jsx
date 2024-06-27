@@ -31,7 +31,7 @@ function CreateEvent() {
     // Add form validation here
     // Add logic to create/edit/delete event
     console.log("Creating Event...");
-    fetch("/api/createEvent", {
+    fetch("api/create_event/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,6 +52,19 @@ function CreateEvent() {
         shifts
        }),
     })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Event Created");
+    })
+    .catch((error) => {
+      console.error("Creation error: ", error);
+      setError("Could not create your event");
+    });
     alert("Event created!");
   };
 

@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from rest_framework.views import APIView
+from rest_framework import status
 from datetime import datetime
+from rest_framework.response import Response
+from django_main.serializers import EventSerializer
+
 
 def home(request):
     return render(request, 'viteapp/index.html')
@@ -25,7 +29,7 @@ class BaseValidationView(APIView):
         return errors
 
 class CreateEventView(BaseValidationView):
-    def validate_events(self, shifts):
+    def post(self, request):
         data = request.data
         errors = self.validate_event_data(data)
         if errors:
