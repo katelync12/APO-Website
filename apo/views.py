@@ -31,15 +31,20 @@ class BaseValidationView(APIView):
 class CreateEventView(BaseValidationView):
     def post(self, request):
         data = request.data
+        print(data)
         errors = self.validate_event_data(data)
+        print(errors)
         if errors:
             return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
 
         event_serializer = EventSerializer(data=data)
+        print(event_serializer)
+
         if event_serializer.is_valid():
             event_serializer.save()
             return Response(event_serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print(event_serializer.errors)
             return Response(event_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def validate_event_data(self, data):

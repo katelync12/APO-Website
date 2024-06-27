@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = ['start_time', 'end_time', 'max_signups']
+        fields = ['start', 'end']
     def validate(self, data):
         """
         Check that the start is before the stop.
@@ -29,8 +29,8 @@ class EventSerializer(serializers.ModelSerializer):
     shifts = ShiftSerializer(many=True)
     start_time = serializers.DateTimeField(source='dateTimeRange.start')
     end_time = serializers.DateTimeField(source='dateTimeRange.end')
-    signups_lock_time = serializers.DateTimeField(source='lockDate')
-    signups_close_time = serializers.DateTimeField(source='signUpEnd')
+    signups_lock = serializers.DateTimeField(source='lockDate')
+    signups_close = serializers.DateTimeField(source='signUpEnd')
 
     class Meta:
         model = Event
@@ -42,3 +42,6 @@ class EventSerializer(serializers.ModelSerializer):
         for shift_data in shifts_data:
             Shift.objects.create(event=event, **shift_data)
         return event
+    
+    def validate(self, data):
+        return data
