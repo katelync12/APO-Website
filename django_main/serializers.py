@@ -18,24 +18,22 @@ class UserSerializer(serializers.ModelSerializer):
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = ['start', 'end']
+        fields = ['name', 'capacity', 'start_time', 'end_time']
     def validate(self, data):
-        """
-        Check that the start is before the stop.
-        """
+        print("shift validated!")
+        return data
         
     
 class EventSerializer(serializers.ModelSerializer):
     shifts = ShiftSerializer(many=True)
-    start_time = serializers.DateTimeField(source='dateTimeRange.start')
-    end_time = serializers.DateTimeField(source='dateTimeRange.end')
-    signups_lock = serializers.DateTimeField(source='lockDate')
-    signups_close = serializers.DateTimeField(source='signUpEnd')
-
+    start_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
+    end_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
+    signup_lock = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
+    signup_close = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
     class Meta:
         model = Event
-        fields = ['title', 'date', 'start_time', 'end_time', 'description', 'signups_lock', 'signups_close', 'event_coordinator', 'location', 'categories', 'shifts']
-
+        fields = ['title', 'description', 'start_time', 'end_time', 'signup_lock', 'signup_close', 'event_coordinator', 'location', 'categories', 'shifts']
+    
     def create(self, validated_data):
         shifts_data = validated_data.pop('shifts')
         event = Event.objects.create(**validated_data)

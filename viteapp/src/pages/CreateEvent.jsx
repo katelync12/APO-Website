@@ -3,31 +3,40 @@ import { NavBar } from "../components";
 
 function CreateEvent() {
   const [title, setTitle] = useState("");
-  const [dateTimeRange, setDateTimeRange] = useState({ start: "", end: "" });
+  const [start_time, setStartTime] = useState("");
+  const [end_time, setEndTime] = useState("");
   const [location, setLocation] = useState("");
-  const [requirementCredit, setRequirementCredit] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [signUpStart, setSignUpStart] = useState("");
-  const [signUpEnd, setSignUpEnd] = useState("");
-  const [lockDate, setLockDate] = useState("");
-  const [coordinator, setCoordinator] = useState("");
+  const [description, setDescription] = useState("");
+  const [signup_close, setSignUpClose] = useState("");
+  const [signup_lock, setSignUpLock] = useState("");
+  const [event_coordinator, setCoordinator] = useState("");
   const [showSignUpList, setShowSignUpList] = useState(false);
-  const [inviteGroups, setInviteGroups] = useState([]);
-  const [isGroupEvent, setIsGroupEvent] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState(null);
-  const [shifts, setShifts] = useState([{ start: "", end: "" }]);
+  const [shifts, setShifts] = useState([{name: "", capacity: "", start_time: "", end_time: "" }]);
 
   const handleAddShift = () => {
-    setShifts([...shifts, { start: "", end: "" }]);
+    setShifts([...shifts, { name: "", capacity: "", start_time: "", end_time: "" }]);
   };
 
   const handleRemoveShift = (index) => {
     const newShifts = shifts.filter((_, i) => i !== index);
     setShifts(newShifts);
   };
-
+  const convertToUTC = (localDateTime) => {
+    const date = new Date(localDateTime);
+    return date.toISOString();
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Convert the datetime fields to UTC
+    const utcStartTime = convertToUTC(start_time);
+    const utcEndTime = convertToUTC(end_time);
+    const utcSignupClose = convertToUTC(signup_close);
+    const utcSignupLock = convertToUTC(signup_lock);
+    const utcShifts = shifts.map(shift => ({
+      ...shift,
+      start_time: convertToUTC(shift.start_time),
+      end_time: convertToUTC(shift.end_time),
+    }));
     // Add form validation here
     // Add logic to create/edit/delete event
     console.log("Creating Event...");
@@ -36,20 +45,17 @@ function CreateEvent() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, 
-        dateTimeRange,
+      body: JSON.stringify({
+        title, 
+        start_time: utcStartTime,
+        end_time: utcEndTime,
         location,
-        requirementCredit,
-        additionalInfo,
-        signUpStart,
-        signUpEnd,
-        lockDate,
-        coordinator,
+        description,
+        signup_close: utcSignupClose,
+        signup_lock: utcSignupLock,
+        event_coordinator,
         showSignUpList,
-        inviteGroups,
-        isGroupEvent,
-        attachedFiles,
-        shifts
+        shifts: utcShifts,
        }),
     })
     .then((response) => {
@@ -109,16 +115,16 @@ function CreateEvent() {
             <label className="block text-gray-700 text-sm font-bold mb-2">Date/Time Range</label>
             <input
               type="datetime-local"
-              value={dateTimeRange.start}
-              onChange={(e) => setDateTimeRange({ ...dateTimeRange, start: e.target.value })}
+              value={start_time}
+              onChange={(e) => setStartTime(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
               placeholder="Start Date/Time"
               required
             />
             <input
               type="datetime-local"
-              value={dateTimeRange.end}
-              onChange={(e) => setDateTimeRange({ ...dateTimeRange, end: e.target.value })}
+              value={end_time}
+              onChange={(e) => setEndTime(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
               placeholder="End Date/Time"
               required
@@ -138,56 +144,37 @@ function CreateEvent() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Requirement Credit</label>
-            <input
-              type="text"
-              value={requirementCredit}
-              onChange={(e) => setRequirementCredit(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Requirement Credit"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Additional Information</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
             <textarea
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Additional Information"
+              placeholder="Description"
+              required
             ></textarea>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up Start Date</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up Close Date</label>
             <input
               type="datetime-local"
-              value={signUpStart}
-              onChange={(e) => setSignUpStart(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Sign-up Start Date"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Sign-up End Date</label>
-            <input
-              type="datetime-local"
-              value={signUpEnd}
-              onChange={(e) => setSignUpEnd(e.target.value)}
+              value={signup_close}
+              onChange={(e) => setSignUpClose(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
               placeholder="Sign-up End Date"
+              required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Lock Date</label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Lock Attendees Date</label>
             <input
               type="datetime-local"
-              value={lockDate}
-              onChange={(e) => setLockDate(e.target.value)}
+              value={signup_lock}
+              onChange={(e) => setSignUpLock(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
               placeholder="Lock Date"
+              required
             />
           </div>
 
@@ -195,10 +182,11 @@ function CreateEvent() {
             <label className="block text-gray-700 text-sm font-bold mb-2">Coordinator</label>
             <input
               type="text"
-              value={coordinator}
+              value={event_coordinator}
               onChange={(e) => setCoordinator(e.target.value)}
               className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
               placeholder="Event Coordinator"
+              required
             />
           </div>
 
@@ -214,46 +202,39 @@ function CreateEvent() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Invite Groups</label>
-            <input
-              type="text"
-              value={inviteGroups.join(", ")}
-              onChange={(e) => setInviteGroups(e.target.value.split(",").map(group => group.trim()))}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Invite Groups (comma separated)"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Is Group Event</label>
-            <input
-              type="checkbox"
-              checked={isGroupEvent}
-              onChange={(e) => setIsGroupEvent(e.target.checked)}
-              className="mr-2 leading-tight"
-            />
-            <span>Yes</span>
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Attach Files</label>
-            <input
-              type="file"
-              onChange={(e) => setAttachedFiles(e.target.files)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-            />
-          </div>
-
-          <div className="mb-4">
             <h2 className="text-lg font-bold mb-2">Shifts</h2>
             {shifts.map((shift, index) => (
               <div key={index} className="mb-2 flex flex-col">
-                <input
-                  type="datetime-local"
-                  value={shift.start}
+              <input
+                  type="text"
+                  value={shift.name}
                   onChange={(e) => {
                     const newShifts = [...shifts];
-                    newShifts[index].start = e.target.value;
+                    newShifts[index].name = e.target.value;
+                    setShifts(newShifts);
+                  }}
+                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                  placeholder="Shift Name"
+                  required
+                />
+                <input
+                  type="number"
+                  value={shift.capacity}
+                  onChange={(e) => {
+                    const newShifts = [...shifts];
+                    newShifts[index].capacity = e.target.value;
+                    setShifts(newShifts);
+                  }}
+                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
+                  placeholder="Shift Capacity"
+                  required
+                />
+                <input
+                  type="datetime-local"
+                  value={shift.start_time}
+                  onChange={(e) => {
+                    const newShifts = [...shifts];
+                    newShifts[index].start_time = e.target.value;
                     setShifts(newShifts);
                   }}
                   className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
@@ -262,10 +243,10 @@ function CreateEvent() {
                 />
                 <input
                   type="datetime-local"
-                  value={shift.end}
+                  value={shift.end_time}
                   onChange={(e) => {
                     const newShifts = [...shifts];
-                    newShifts[index].end = e.target.value;
+                    newShifts[index].end_time = e.target.value;
                     setShifts(newShifts);
                   }}
                   className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"

@@ -32,6 +32,6 @@ urlpatterns = [
     re_path('api/test_token', authentication_views.test_token),
     re_path('api/create_event', views.CreateEventView.as_view()),
     # path('google-auth/', authentication_views.google_auth_redirect),
-    #This acts as a catch-all
+    #This acts as a catch-all    
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
 ]

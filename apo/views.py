@@ -32,15 +32,11 @@ class CreateEventView(BaseValidationView):
     def post(self, request):
         data = request.data
         print(data)
-        errors = self.validate_event_data(data)
-        print(errors)
-        if errors:
-            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
-
         event_serializer = EventSerializer(data=data)
         print(event_serializer)
 
         if event_serializer.is_valid():
+            print("event serializer is valid")
             event_serializer.save()
             return Response(event_serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -51,7 +47,7 @@ class CreateEventView(BaseValidationView):
         errors = []
         errors.extend(self.validate_date_range(data))
         # get the shifts
-        errors.extend(self.validate_shifts(data['shifts']))
+        #errors.extend(self.validate_shifts(data['shifts']))
         return errors
 
     def validate_shifts(self, shifts):
