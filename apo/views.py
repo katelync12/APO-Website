@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
 from rest_framework.response import Response
-from django_main.serializers import EventSerializer
+from django_main.serializers import EventSerializer, CategorySerializer
+from apo.models import Category
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 
 def home(request):
@@ -27,7 +29,32 @@ class BaseValidationView(APIView):
         except Exception as e:
             errors.append("Invalid date format.")
         return errors
-
+    def format_errors(self, errors):
+        error_messages = []
+        for field, error_list in errors.items():
+            if isinstance(error_list, list):
+                for error in error_list:
+                    error_messages.append(f"{field}: {str(error)}")
+            else:
+                error_messages.append(f"{field}: {str(error_list)}")
+        return " ".join(error_messages)
+    
+@api_view(['POST'])
+def add_category(request):
+    data = request.data
+    category_serializer = CategorySerializer(data=data)
+    if category_serializer.is_valid():
+        category_serializer.save()
+        return Response(category_serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(category_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def get_categories(request):
+    categories = Category.objects.all()
+    category_serializer = CategorySerializer(categories, many=True)
+    return Response(category_serializer.data, status=status.HTTP_200_OK)
+    
 class CreateEventView(BaseValidationView):
     def post(self, request):
         data = request.data
@@ -38,31 +65,11 @@ class CreateEventView(BaseValidationView):
         if event_serializer.is_valid():
             print("event serializer is valid")
             event_serializer.save()
-            return Response(event_serializer.data, status=status.HTTP_201_CREATED)
+            print("event saved")
+            return Response("Passed", status=status.HTTP_201_CREATED)
         else:
-            print(event_serializer.errors)
-            return Response(event_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            formatted_errors = self.format_errors(event_serializer.errors)
+            print(formatted_errors)
+            return Response({'detail': formatted_errors}, status=status.HTTP_400_BAD_REQUEST)
         
-    def validate_event_data(self, data):
-        errors = []
-        errors.extend(self.validate_date_range(data))
-        # get the shifts
-        #errors.extend(self.validate_shifts(data['shifts']))
-        return errors
-
-    def validate_shifts(self, shifts):
-        errors = []
-        counter = 1
-        for shift in shifts:
-            try:
-                shift_start = datetime.fromisoformat(shift.get('start'))
-                shift_end = datetime.fromisoformat(shift.get('end'))
-                if shift_start >= shift_end:
-                    errors.append(f"Shift {counter}'s end time must be after start time.")
-                if not shift_start or not shift_end:
-                    errors.append(f"Shift {counter}'s times cannot be blank.")
-                if shift_start <= datetime.now():
-                    errors.append("Shift {counter} must be in the future.")
-            except Exception as e:
-                errors.append("Invalid shift date format.")
-        return errors

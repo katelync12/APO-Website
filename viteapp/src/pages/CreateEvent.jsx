@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { NavBar } from "../components";
-
+import CategoryDropdown from "../components/CategoryDropdown";
+import {CreateCategory} from "../components";
+import { Modal, Button } from 'react-bootstrap';
 function CreateEvent() {
   const [title, setTitle] = useState("");
   const [start_time, setStartTime] = useState("");
@@ -11,8 +13,12 @@ function CreateEvent() {
   const [signup_lock, setSignUpLock] = useState("");
   const [event_coordinator, setCoordinator] = useState("");
   const [showSignUpList, setShowSignUpList] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [shifts, setShifts] = useState([{name: "", capacity: "", start_time: "", end_time: "" }]);
-
+  const [showModal, setShowModal] = useState(false);
+  
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
   const handleAddShift = () => {
     setShifts([...shifts, { name: "", capacity: "", start_time: "", end_time: "" }]);
   };
@@ -56,22 +62,26 @@ function CreateEvent() {
         event_coordinator,
         showSignUpList,
         shifts: utcShifts,
+        categories: selectedCategories,
        }),
     })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        return response.json().then((errorData) => {
+          throw new Error(errorData.detail || 'Error creating event');
+        });
       }
       return response.json();
     })
     .then((data) => {
       console.log("Event Created");
+      alert("Event created!");
     })
     .catch((error) => {
       console.error("Creation error: ", error);
-      setError("Could not create your event");
+      alert(error.message)
     });
-    alert("Event created!");
+  
   };
 
   return (
@@ -189,7 +199,10 @@ function CreateEvent() {
               required
             />
           </div>
-
+          <CategoryDropdown
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+          />
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Show Sign-up List</label>
             <input
@@ -271,15 +284,34 @@ function CreateEvent() {
                 Add Shift
               </button>
             </div>
+            <Button
+        variant="success"
+        onClick={handleShow}
+      >
+        Add Category
+      </Button>
           </div>
-
           <div className="center-button">
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
               Save Event
             </button>
           </div>
         </form>
+        
       </div>
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create Category</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <CreateCategory />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
