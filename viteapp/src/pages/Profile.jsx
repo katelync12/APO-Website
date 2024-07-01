@@ -92,11 +92,6 @@ function Profile() {
 
   return (
     <div className="w-screen h-auto flex flex-col bg-white text-black overflow-x-hidden">
-      <style>{`
-        body {
-          overflow-x: hidden;
-        }
-      `}</style>
       <NavBar />
       <div className="flex-grow w-screen mx-auto flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden pt-8 pb-12 px-4 md:px-8">
         <form onSubmit={handleSubmit} className="w-full max-w-4xl bg-gray-200 p-8 rounded-lg shadow-md overflow-x-hidden">

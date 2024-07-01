@@ -47,6 +47,7 @@ export default {
         lg: "1280px",
       },
       fontSize: {
+        xxs: "0.5rem",
         xs: "0.6rem",
         sm: "0.8rem",
         med: "0.9rem",
