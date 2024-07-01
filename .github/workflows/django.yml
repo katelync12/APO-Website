@@ -44,6 +44,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '22'
+
+    - name: Install and Build frontend dependencies
+      run: |
+        cd viteapp
+        npm install
+        npm run build
+
     - name: Run migrations
       run: |
         python manage.py makemigrations
