@@ -1,38 +1,54 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { NavBar, CalendarToolbar, CalendarFilter } from "../components";
+import { useMediaQuery } from "react-responsive";
 import { MOCK_EVENTS } from "../constants/event";
-import { NavBar } from "../components";
 
 const localizer = momentLocalizer(moment);
 
 function CalendarPage() {
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [view, setView] = useState(Views.MONTH); // Default view
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for selected date
 
-  const uniqueCategories = [...new Set(MOCK_EVENTS.map(event => event.category))];
+  const isMobile = useMediaQuery({ maxWidth: 640 });
+  const isLaptop = useMediaQuery({ minWidth: 641 }); // Added media query for laptop
+
+  const uniqueCategories = [
+    ...new Set(MOCK_EVENTS.map((event) => event.category)),
+  ];
 
   const handleCheckboxChange = (category) => {
-    setSelectedCategories(prev =>
+    setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter(c => c !== category)
+        ? prev.filter((c) => c !== category)
         : [...prev, category]
     );
   };
 
   const categoryColors = {
-    "Meeting": "#FF5733",
-    "Conference": "#33FF57",
-    "Personal": "#3357FF",
-    "Training": "#FF33A8",
-    "Celebration": "#A833FF",
-    "Workshop": "#FFD700",
+    Meeting: "#FF5733",
+    Conference: "#33FF57",
+    Personal: "#3357FF",
+    Training: "#FF33A8",
+    Celebration: "#A833FF",
+    Workshop: "#FFD700",
+    Workout: "#FF5733",
+    Dinner: "#33FF57",
+    Lunch: "#3357FF",
+    Breakfast: "#FF33A8",
   };
 
-  const filteredEvents = MOCK_EVENTS.filter(event =>
-    selectedCategories.length === 0 || selectedCategories.includes(event.category)
-  ).map(event => ({
-    title: !event.allDay ? `${moment(event.start).format('HH:mm')} - ${event.title}` : event.title,
+  const filteredEvents = MOCK_EVENTS.filter(
+    (event) =>
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(event.category)
+  ).map((event) => ({
+    title: !event.allDay
+      ? `${moment(event.start).format("HH:mm")} - ${event.title}`
+      : event.title,
     start: new Date(event.start),
     end: new Date(event.end),
     color: categoryColors[event.category],
@@ -47,27 +63,24 @@ function CalendarPage() {
     <div className="h-screen w-screen flex flex-col items-center bg-white-200">
       <NavBar />
 
-      <div className="w-full px-10 py-5">
-        <div className="flex justify-center mb-4 flex-wrap">
-          {uniqueCategories.map(category => (
-            <label key={category} className="checkbox-label" style={{ backgroundColor: categoryColors[category] }}>
-              <input
-                type="checkbox"
-                checked={selectedCategories.includes(category)}
-                onChange={() => handleCheckboxChange(category)}
-                className="checkbox-input"
-              />
-              <span className="checkbox-text">{category}</span>
-            </label>
-          ))}
+      <div className="flex flex-col justify-center w-full px-10 py-5">
+        {/* Calendar Filters */}
+        <div className="flex w-full">
+          <CalendarFilter
+            uniqueCategories={uniqueCategories}
+            selectedCategories={selectedCategories}
+            handleCheckboxChange={handleCheckboxChange}
+            categoryColors={categoryColors}
+          />
         </div>
+
         <div className="App">
           <Calendar
             localizer={localizer}
             startAccessor="start"
             events={filteredEvents}
             endAccessor="end"
-            style={{ height: "75vh" }}
+            className="h-[75vh] w-full"
             eventPropGetter={(event) => {
               return {
                 style: {
@@ -76,8 +89,15 @@ function CalendarPage() {
               };
             }}
             onSelectEvent={handleSelectEvent}
+            view={view}
+            onView={(newView) => setView(newView)}
             views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
             showAllEvents={true}
+            date={selectedDate} // Pass selectedDate to the Calendar
+            onNavigate={(date) => setSelectedDate(date)} // Update selectedDate on navigate
+            components={
+              isMobile ? { toolbar: CalendarToolbar } : {} // Use the custom toolbar on mobile for now
+            }
           />
         </div>
       </div>
@@ -159,6 +179,29 @@ function CalendarPage() {
         }
         .checkbox-text {
           color: white;
+        }
+
+        .dropdown-filter {
+          width: 100%;
+        }
+        /* Mobile-specific styles */
+        @media (max-width: 640px) {
+          .rbc-toolbar .rbc-btn-group {
+            display: none; /* Hide the original view buttons on mobile */
+          }
+          .rbc-event-content {
+            white-space: nowrap !important; /* Prevent text wrap on mobile */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 100px; /* Adjust width as needed */
+          }
+        }
+
+        /* Laptop-specific styles */
+        @media (min-width: 641px) {
+          .mobile-view-dropdown {
+            display: none; /* Hide the dropdown on larger screens */
+          }
         }
       `}</style>
     </div>
