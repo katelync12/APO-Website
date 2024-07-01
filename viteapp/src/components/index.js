@@ -4,6 +4,7 @@ import NavBar from "./NavBar";
 import PermissionRoute from "./PermissionRouter";
 import CalendarToolbar from "./CalendarToolbar";
 import CalendarFilter from "./CalendarFilter";
+import Leaderboard from "./Leaderboard";
 
 export {
   CustomButton,
@@ -12,4 +13,5 @@ export {
   PermissionRoute,
   CalendarToolbar,
   CalendarFilter,
+  Leaderboard,
 };

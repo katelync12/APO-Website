@@ -1,6 +1,19 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LoginPage, ErrorPage, SuccessPage, CalenderPage, EventDetailsPage, Profile, Requirements, CreateAccount, EditRoles, CreateEvent, PermissionError} from "./pages";
-import {PrivateRoute, PermissionRoute} from './components'
+import {
+  LoginPage,
+  ErrorPage,
+  SuccessPage,
+  CalenderPage,
+  EventDetailsPage,
+  Profile,
+  Requirements,
+  CreateAccount,
+  EditRoles,
+  CreateEvent,
+  PermissionError,
+  LeaderboardPage,
+} from "./pages";
+import { PrivateRoute, PermissionRoute } from "./components";
 
 function App() {
   return (
@@ -14,11 +27,26 @@ function App() {
         <Route path="/requirements" element={<Requirements />}></Route>
         <Route path="/account/create" element={<CreateAccount />}></Route>
         <Route path="/account/roles" element={<EditRoles />}></Route>
-        <Route path="/protected" element={<PermissionRoute permission="auth.default" element={<CalenderPage />} />} />
+        <Route
+          path="/protected"
+          element={
+            <PermissionRoute
+              permission="auth.default"
+              element={<CalenderPage />}
+            />
+          }
+        />
 
-        <Route path="/success" element={<PrivateRoute element={<SuccessPage />} />} />
-        <Route path="/calendar" element={<PrivateRoute element={<CalenderPage />} />} />
+        <Route
+          path="/success"
+          element={<PrivateRoute element={<SuccessPage />} />}
+        />
+        <Route
+          path="/calendar"
+          element={<PrivateRoute element={<CalenderPage />} />}
+        />
         <Route path="/permissionerror" element={<PermissionError />}></Route>
+        <Route path="/leaderboard" element={<LeaderboardPage />}></Route>
         <Route path="*" element={<ErrorPage />}></Route>
       </Routes>
     </BrowserRouter>

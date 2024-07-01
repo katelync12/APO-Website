@@ -9,5 +9,19 @@ import CreateAccount from "./CreateAccount";
 import EditRoles from "./EditRoles";
 import CreateEvent from "./CreateEvent";
 import PermissionError from "./PermissionError";
+import LeaderboardPage from "./LeaderboardPage";
 
-export { LoginPage, ErrorPage, SuccessPage, CalenderPage, EventDetailsPage, Profile, Requirements, CreateAccount, EditRoles, CreateEvent, PermissionError };
+export {
+  LoginPage,
+  ErrorPage,
+  SuccessPage,
+  CalenderPage,
+  EventDetailsPage,
+  Profile,
+  Requirements,
+  CreateAccount,
+  EditRoles,
+  CreateEvent,
+  PermissionError,
+  LeaderboardPage,
+};
