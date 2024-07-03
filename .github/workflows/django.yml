@@ -1,0 +1,67 @@
+name: CI for Django
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: apo_database
+          POSTGRES_USER: apo
+          POSTGRES_PASSWORD: apo
+        options: >-
+          --health-cmd "pg_isready -U $POSTGRES_USER"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_NAME: apo_database
+      DB_USER: apo
+      DB_PASSWORD: apo
+      DB_HOST: dev.sigapp.club
+      DB_PORT: 5432
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '22'
+
+    - name: Install and Build frontend dependencies
+      run: |
+        cd viteapp
+        npm install
+        npm run build
+
+    - name: Run migrations
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
+
+    - name: Check if server starts
+      run: |
+        python manage.py runserver 8002 &
+        sleep 10
+        curl -f http://127.0.0.1:8002 || exit 1
