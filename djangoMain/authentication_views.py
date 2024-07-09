@@ -32,8 +32,6 @@ def signup(request):
 
 @api_view(['POST'])
 def login(request):
-    print('login')
-    print(request.data['email'])
     user = get_object_or_404(User, email=request.data['email'])
     if not user.check_password(request.data['password']):
         return Response("missing user", status=status.HTTP_404_NOT_FOUND)
