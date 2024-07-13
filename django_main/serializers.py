@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from apo.models import Shift, Event, Category
+from apo.models import Shift, Event, Category, Recurrence
 from django.utils import timezone
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -40,14 +40,17 @@ class EventSerializer(serializers.ModelSerializer):
     signup_close = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
     categories = serializers.ListField(child=serializers.CharField(), write_only=True)
     category_objects = serializers.SerializerMethodField()
+    recurrence = serializers.PrimaryKeyRelatedField(queryset=Recurrence.objects.all(), allow_null=True, required=False)
+  
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'start_time', 'end_time', 'signup_lock', 'signup_close', 'event_coordinator', 'location', 'categories', 'category_objects', 'shifts']
+        fields = ['title', 'description', 'start_time', 'end_time', 'signup_lock', 'signup_close', 'event_coordinator', 'location', 'categories', 'category_objects', 'shifts', 'recurrence', 'driving']
     
     def create(self, validated_data):
         categories_data = validated_data.pop('categories', [])
         shifts_data = validated_data.pop('shifts')
+        #recurrence_data = validated_data.pop('recurrence', None)
         print("HELLO! THIS IS VALIDATED DATA")
         print(validated_data)
         event = Event.objects.create(**validated_data)
@@ -57,6 +60,10 @@ class EventSerializer(serializers.ModelSerializer):
         for category_name in categories_data:
             category, created = Category.objects.get_or_create(name=category_name)
             event.categories.add(category)
+
+        #if recurrence_data:
+            #event.recurrence = recurrence_data
+            #event.save()
         return event
     
     def get_category_objects(self, obj):

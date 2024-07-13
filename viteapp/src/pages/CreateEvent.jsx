@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { NavBar } from "../components";
 import CategoryDropdown from "../components/CategoryDropdown";
-import {CreateCategory} from "../components";
+import { CreateCategory } from "../components";
 import { Modal, Button } from 'react-bootstrap';
+
 function CreateEvent() {
   const [title, setTitle] = useState("");
   const [start_time, setStartTime] = useState("");
@@ -14,9 +15,13 @@ function CreateEvent() {
   const [event_coordinator, setCoordinator] = useState("");
   const [showSignUpList, setShowSignUpList] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [shifts, setShifts] = useState([{name: "", capacity: "", start_time: "", end_time: "" }]);
+  const [shifts, setShifts] = useState([{ name: "", capacity: "", start_time: "", end_time: "" }]);
   const [showModal, setShowModal] = useState(false);
-  
+  const [driving, setDriving] = useState(false);  // New state for driving checkbox
+  const [isRecurring, setIsRecurring] = useState(false);  // New state for recurrence checkbox
+  const [recurrenceEnd, setRecurrenceEnd] = useState("");  // New state for recurrence end date
+  const [recurrenceInterval, setRecurrenceInterval] = useState("");  // New state for recurrence interval
+
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
   const handleAddShift = () => {
@@ -27,10 +32,12 @@ function CreateEvent() {
     const newShifts = shifts.filter((_, i) => i !== index);
     setShifts(newShifts);
   };
+
   const convertToUTC = (localDateTime) => {
     const date = new Date(localDateTime);
     return date.toISOString();
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Convert the datetime fields to UTC
@@ -52,7 +59,7 @@ function CreateEvent() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title, 
+        title,
         start_time: utcStartTime,
         end_time: utcEndTime,
         location,
@@ -63,7 +70,10 @@ function CreateEvent() {
         showSignUpList,
         shifts: utcShifts,
         categories: selectedCategories,
-       }),
+        driving,  // Include driving in the request body
+        recurrence_end: isRecurring ? convertToUTC(recurrenceEnd) : null,  // Include recurrence end date if applicable
+        recurrence_interval: isRecurring ? recurrenceInterval : null,  // Include recurrence interval if applicable
+      }),
     })
     .then((response) => {
       if (!response.ok) {
@@ -79,9 +89,8 @@ function CreateEvent() {
     })
     .catch((error) => {
       console.error("Creation error: ", error);
-      alert(error.message)
+      alert(error.message);
     });
-  
   };
 
   return (
@@ -199,10 +208,12 @@ function CreateEvent() {
               required
             />
           </div>
+
           <CategoryDropdown
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
           />
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Show Sign-up List</label>
             <input
@@ -218,7 +229,7 @@ function CreateEvent() {
             <h2 className="text-lg font-bold mb-2">Shifts</h2>
             {shifts.map((shift, index) => (
               <div key={index} className="mb-2 flex flex-col">
-              <input
+                <input
                   type="text"
                   value={shift.name}
                   onChange={(e) => {
@@ -284,20 +295,64 @@ function CreateEvent() {
                 Add Shift
               </button>
             </div>
-            <Button
-        variant="success"
-        onClick={handleShow}
-      >
-        Add Category
-      </Button>
           </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Driving</label>
+            <input
+              type="checkbox"
+              checked={driving}
+              onChange={(e) => setDriving(e.target.checked)}
+              className="mr-2 leading-tight"
+            />
+            <span>Yes</span>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">Recurring Event</label>
+            <input
+              type="checkbox"
+              checked={isRecurring}
+              onChange={(e) => setIsRecurring(e.target.checked)}
+              className="mr-2 leading-tight"
+            />
+            <span>Yes</span>
+          </div>
+
+          {isRecurring && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Recurrence End Date</label>
+                <input
+                  type="datetime-local"
+                  value={recurrenceEnd}
+                  onChange={(e) => setRecurrenceEnd(e.target.value)}
+                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                  placeholder="Recurrence End Date"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Recurrence Interval (days)</label>
+                <input
+                  type="number"
+                  value={recurrenceInterval}
+                  onChange={(e) => setRecurrenceInterval(e.target.value)}
+                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+                  placeholder="Recurrence Interval"
+                  required
+                />
+              </div>
+            </>
+          )}
+
           <div className="center-button">
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
               Save Event
             </button>
           </div>
         </form>
-        
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>

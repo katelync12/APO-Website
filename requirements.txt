@@ -12,3 +12,4 @@ django-allauth~=0.63.3
 django-allauth[socialaccount]~=0.63.3
 PyJWT~=2.8.0
 cryptography~=42.0.8
+python-dateutil

@@ -22,6 +22,8 @@ class Membership(models.Model):
     name = models.CharField(max_length=50, unique=True)
     requirements = models.ManyToManyField('Requirement')
 
+class Recurrence(models.Model):
+    pass  # Only the primary key is needed
 
 class Event(models.Model):
     title = models.CharField(max_length=100)
@@ -33,6 +35,8 @@ class Event(models.Model):
     event_coordinator = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.TextField()
     categories = models.ManyToManyField('Category')
+    driving = models.BooleanField(default=False)  # Added default value
+    recurrence = models.ForeignKey(Recurrence, on_delete=models.SET_NULL, null=True, blank=True)
 
 class Shift(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
