@@ -80,4 +80,9 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Signup lock time must be in the future.")
         if data['signup_close'] <= now:
             raise serializers.ValidationError("Signup close time must be in the future.")
+        
+        shifts_data = self.initial_data.get('shifts', [])
+        if not shifts_data:
+            raise serializers.ValidationError("An event must have at least one shift.")
+        
         return data

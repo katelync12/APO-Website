@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { NavBar } from "../components";
 import CategoryDropdown from "../components/CategoryDropdown";
 import { CreateCategory } from "../components";
@@ -21,6 +21,19 @@ function CreateEvent() {
   const [isRecurring, setIsRecurring] = useState(false);  // New state for recurrence checkbox
   const [recurrenceEnd, setRecurrenceEnd] = useState("");  // New state for recurrence end date
   const [recurrenceInterval, setRecurrenceInterval] = useState("");  // New state for recurrence interval
+  const [containsMultipleShifts, setContainsMultipleShifts] = useState(false);
+
+  useEffect(() => {
+    if (!containsMultipleShifts) {
+      // When single shift mode is enabled, set a default shift
+      setShifts([{
+        name: title,
+        capacity: -1,
+        start_time: start_time,
+        end_time: end_time
+      }]);
+    }
+  }, [containsMultipleShifts, title, start_time, end_time]);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -37,7 +50,7 @@ function CreateEvent() {
     const date = new Date(localDateTime);
     return date.toISOString();
   };
-
+``
   const handleSubmit = (event) => {
     event.preventDefault();
     // Convert the datetime fields to UTC
@@ -226,76 +239,89 @@ function CreateEvent() {
           </div>
 
           <div className="mb-4">
-            <h2 className="text-lg font-bold mb-2">Shifts</h2>
-            {shifts.map((shift, index) => (
-              <div key={index} className="mb-2 flex flex-col">
-                <input
-                  type="text"
-                  value={shift.name}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].name = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-                  placeholder="Shift Name"
-                  required
-                />
-                <input
-                  type="number"
-                  value={shift.capacity}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].capacity = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
-                  placeholder="Shift Capacity"
-                  required
-                />
-                <input
-                  type="datetime-local"
-                  value={shift.start_time}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].start_time = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-                  placeholder="Shift Start"
-                  required
-                />
-                <input
-                  type="datetime-local"
-                  value={shift.end_time}
-                  onChange={(e) => {
-                    const newShifts = [...shifts];
-                    newShifts[index].end_time = e.target.value;
-                    setShifts(newShifts);
-                  }}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
-                  placeholder="Shift End"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveShift(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded mt-2"
-                >
-                  Remove Shift
-                </button>
-              </div>
-            ))}
-            <div className="center-button">
-              <button
-                type="button"
-                onClick={handleAddShift}
-                className="bg-green-500 text-white px-4 py-2 rounded mt-2"
-              >
-                Add Shift
-              </button>
-            </div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Contains Multiple Shifts</label>
+            <input
+              type="checkbox"
+              checked={containsMultipleShifts}
+              onChange={(e) => setContainsMultipleShifts(e.target.checked)}
+              className="mr-2 leading-tight"
+            />
+            <span>Yes</span>
           </div>
+
+          {containsMultipleShifts && (
+  <div className="mb-4">
+    <h2 className="text-lg font-bold mb-2">Shifts</h2>
+    {shifts.map((shift, index) => (
+      <div key={index} className="mb-2 flex flex-col">
+        <input
+          type="text"
+          value={shift.name}
+          onChange={(e) => {
+            const newShifts = [...shifts];
+            newShifts[index].name = e.target.value;
+            setShifts(newShifts);
+          }}
+          className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+          placeholder="Shift Name"
+          required
+        />
+        <input
+          type="number"
+          value={shift.capacity}
+          onChange={(e) => {
+            const newShifts = [...shifts];
+            newShifts[index].capacity = e.target.value;
+            setShifts(newShifts);
+          }}
+          className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
+          placeholder="Shift Capacity"
+          required
+        />
+        <input
+          type="datetime-local"
+          value={shift.start_time}
+          onChange={(e) => {
+            const newShifts = [...shifts];
+            newShifts[index].start_time = e.target.value;
+            setShifts(newShifts);
+          }}
+          className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
+          placeholder="Shift Start"
+          required
+        />
+        <input
+          type="datetime-local"
+          value={shift.end_time}
+          onChange={(e) => {
+            const newShifts = [...shifts];
+            newShifts[index].end_time = e.target.value;
+            setShifts(newShifts);
+          }}
+          className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200 mt-2"
+          placeholder="Shift End"
+          required
+        />
+        <button
+          type="button"
+          onClick={() => handleRemoveShift(index)}
+          className="bg-red-500 text-white px-2 py-1 rounded mt-2"
+        >
+          Remove Shift
+        </button>
+      </div>
+    ))}
+    <div className="center-button">
+      <button
+        type="button"
+        onClick={handleAddShift}
+        className="bg-green-500 text-white px-4 py-2 rounded mt-2"
+      >
+        Add Shift
+      </button>
+    </div>
+  </div>
+)}
 
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Driving</label>

@@ -23,7 +23,7 @@ class Membership(models.Model):
     requirements = models.ManyToManyField('Requirement')
 
 class Recurrence(models.Model):
-    pass  # Only the primary key is needed
+    pass  # Only the primary key is needed 
 
 class Event(models.Model):
     title = models.CharField(max_length=100)
