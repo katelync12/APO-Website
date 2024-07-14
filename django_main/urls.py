@@ -33,7 +33,7 @@ urlpatterns = [
     re_path('api/create_event', views.CreateEventView.as_view()),
     re_path('api/add_category', views.add_category),
     re_path('api/get_categories', views.get_categories),
-    # path('google-auth/', authenticat    ion_views.google_auth_redirect),
+    # path('google-auth/', authentic at    ion_views.google_auth_redirect),
     #This acts as a catch-all    
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
 ]

@@ -3,7 +3,7 @@ import { NavBar } from "../components";
 import CategoryDropdown from "../components/CategoryDropdown";
 import { CreateCategory } from "../components";
 import { Modal, Button } from 'react-bootstrap';
-
+import { adjustDaysForUTC } from "../utils";
 function CreateEvent() {
   const [title, setTitle] = useState("");
   const [start_time, setStartTime] = useState("");
@@ -12,7 +12,6 @@ function CreateEvent() {
   const [description, setDescription] = useState("");
   const [signup_close, setSignUpClose] = useState("");
   const [signup_lock, setSignUpLock] = useState("");
-  const [event_coordinator, setCoordinator] = useState("");
   const [showSignUpList, setShowSignUpList] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [shifts, setShifts] = useState([{ name: "", capacity: "", start_time: "", end_time: "" }]);
@@ -20,8 +19,33 @@ function CreateEvent() {
   const [driving, setDriving] = useState(false);  // New state for driving checkbox
   const [isRecurring, setIsRecurring] = useState(false);  // New state for recurrence checkbox
   const [recurrenceEnd, setRecurrenceEnd] = useState("");  // New state for recurrence end date
-  const [recurrenceInterval, setRecurrenceInterval] = useState("");  // New state for recurrence interval
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [weekInterval, setWeekInterval] = useState(1);
   const [containsMultipleShifts, setContainsMultipleShifts] = useState(false);
+  const daysOfWeek = [
+    { label: 'Sunday', value: 0 },
+    { label: 'Monday', value: 1 },
+    { label: 'Tuesday', value: 2 },
+    { label: 'Wednesday', value: 3 },
+    { label: 'Thursday', value: 4 },
+    { label: 'Friday', value: 5 },
+    { label: 'Saturday', value: 6 },
+];
+
+const handleDayChange = (value) => {
+    const newSelectedDays = selectedDays.includes(value)
+        ? selectedDays.filter(day => day !== value)
+        : [...selectedDays, value];
+
+    setSelectedDays(newSelectedDays);
+};
+
+const handleIntervalChange = (e) => {
+    const newInterval = parseInt(e.target.value, 10);
+    if (newInterval > 0) {
+        setWeekInterval(newInterval);
+    }
+};
 
   useEffect(() => {
     if (!containsMultipleShifts) {
@@ -50,6 +74,15 @@ function CreateEvent() {
     const date = new Date(localDateTime);
     return date.toISOString();
   };
+  useEffect(() => {
+    if (start_time) {
+      const startDate = new Date(start_time);
+      const dayOfWeek = startDate.getDay();
+      setSelectedDays((prevSelectedDays) =>
+        prevSelectedDays.includes(dayOfWeek) ? prevSelectedDays : [...prevSelectedDays, dayOfWeek]
+      );
+    }
+  }, [start_time]);
 ``
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -63,6 +96,7 @@ function CreateEvent() {
       start_time: convertToUTC(shift.start_time),
       end_time: convertToUTC(shift.end_time),
     }));
+    const adjustedDays = adjustDaysForUTC(start_time, selectedDays);
     // Add form validation here
     // Add logic to create/edit/delete event
     console.log("Creating Event...");
@@ -79,13 +113,13 @@ function CreateEvent() {
         description,
         signup_close: utcSignupClose,
         signup_lock: utcSignupLock,
-        event_coordinator,
         showSignUpList,
         shifts: utcShifts,
         categories: selectedCategories,
         driving,  // Include driving in the request body
         recurrence_end: isRecurring ? convertToUTC(recurrenceEnd) : null,  // Include recurrence end date if applicable
-        recurrence_interval: isRecurring ? recurrenceInterval : null,  // Include recurrence interval if applicable
+        week_interval: isRecurring ? weekInterval : null,  // Include recurrence interval if applicable
+        days_of_week: isRecurring ? adjustedDays : null,  // Include selected days if applicable
       }),
     })
     .then((response) => {
@@ -210,17 +244,7 @@ function CreateEvent() {
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Coordinator</label>
-            <input
-              type="text"
-              value={event_coordinator}
-              onChange={(e) => setCoordinator(e.target.value)}
-              className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-              placeholder="Event Coordinator"
-              required
-            />
-          </div>
+          
 
           <CategoryDropdown
             selectedCategories={selectedCategories}
@@ -359,17 +383,34 @@ function CreateEvent() {
                 />
               </div>
 
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Recurrence Interval (days)</label>
+              <div>
+            <div>
+                <label>Repeat on:</label>
+                {daysOfWeek.map(day => (
+                    <div key={day.value}>
+                        <input
+                            type="checkbox"
+                            id={`day-${day.value}`}
+                            value={day.value}
+                            checked={selectedDays.includes(day.value)}
+                            onChange={() => handleDayChange(day.value)}
+                        />
+                        <label htmlFor={`day-${day.value}`}>{day.label}</label>
+                    </div>
+                ))}
+            </div>
+            <div>
+                <label htmlFor="week-interval">Repeat every:</label>
                 <input
-                  type="number"
-                  value={recurrenceInterval}
-                  onChange={(e) => setRecurrenceInterval(e.target.value)}
-                  className="input-placeholder shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-200"
-                  placeholder="Recurrence Interval"
-                  required
+                    type="number"
+                    id="week-interval"
+                    value={weekInterval}
+                    min="1"
+                    onChange={handleIntervalChange}
                 />
-              </div>
+                <span>week(s)</span>
+            </div>
+        </div>
             </>
           )}
 

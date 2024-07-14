@@ -32,7 +32,6 @@ class Event(models.Model):
     description = models.TextField()
     signup_lock = models.DateTimeField()
     signup_close = models.DateTimeField()
-    event_coordinator = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.TextField()
     categories = models.ManyToManyField('Category')
     driving = models.BooleanField(default=False)  # Added default value

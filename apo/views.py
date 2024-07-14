@@ -63,18 +63,27 @@ class CreateEventView(APIView):
         print(request.data)
         data = request.data
         recurrence_interval = data.get('recurrence_interval')
+        days_of_week = data.get('days_of_week')
+        week_interval = data.get('week_interval')
         
         recurrence_end = data.get('recurrence_end')
         
-        if recurrence_interval and recurrence_end:
-            recurrence_interval = int(recurrence_interval)
+        if week_interval and recurrence_end and days_of_week:
+            week_interval = int(week_interval)
+            recurrence_end = parser.isoparse(recurrence_end)
+
             print("recurring event")
-            if recurrence_interval <= 0:
+            if week_interval <= 0:
                 return Response({"detail": "Recurrence interval must be greater than 0."}, status=status.HTTP_400_BAD_REQUEST)
-            if recurrence_end <= data.get('start_time'):
+            if not days_of_week:
+                return Response({"detail": "At least a day must be specified"}, status=status.HTTP_400_BAD_REQUEST)
+            if recurrence_end <= parser.isoparse(data.get('start_time')):
                 return Response({"detail": "Recurrence end must be past start date."}, status=status.HTTP_400_BAD_REQUEST)
-            recurrence_interval = timedelta(days=recurrence_interval)
-            return self.create_recurring_events(data, recurrence_interval, recurrence_end)
+            start_day_of_week = (parser.isoparse(data.get('start_time')).weekday() + 1) % 7  # Adjust to match your days_of_week values
+            if start_day_of_week not in days_of_week:
+                return Response({"detail": "The event must be included in the recurring days of the week"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return self.create_recurring_events(data, week_interval, days_of_week, recurrence_end)
         else:
             print("single event")
             data['recurrence'] = None
@@ -91,7 +100,65 @@ class CreateEventView(APIView):
             formatted_errors = self.format_errors(event_serializer.errors)
             return Response({'detail': formatted_errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    def create_recurring_events(self, data, recurrence_interval, recurrence_end):
+    def create_recurring_events(self, data, week_interval, days_of_week, recurrence_end):
+        recurrence = Recurrence.objects.create()
+        print(recurrence.id)
+        data['recurrence'] = recurrence.id
+
+        try:
+            start_time = parser.isoparse(data['start_time'])
+            end_time = parser.isoparse(data['end_time'])
+            signup_lock = parser.isoparse(data['signup_lock'])
+            signup_close = parser.isoparse(data['signup_close'])
+            week_interval = timedelta(weeks=week_interval)
+
+            shifts = data.get('shifts', [])
+            parsed_shifts = []
+            for shift in shifts:
+                shift_start_time = parser.isoparse(shift['start_time'])
+                shift_end_time = parser.isoparse(shift['end_time'])
+                parsed_shifts.append({
+                    'name': shift.get('name', ''),
+                    'capacity': shift.get('capacity', -1),
+                    'start_time': shift_start_time,
+                    'end_time': shift_end_time
+                })
+
+            current_date = start_time
+            while current_date <= recurrence_end:
+                for day in days_of_week:
+                    diff = (day - (current_date.weekday() + 1) % 7) % 7
+                    next_date = current_date + timedelta(days=diff)
+                    #next_date = current_date + timedelta(days=(day - current_date.weekday() + 7) % 7)
+                    if next_date > recurrence_end:
+                        continue
+                    
+                    event_data = data.copy()
+                    event_data['start_time'] = next_date.isoformat()
+                    event_data['end_time'] = (next_date + (end_time - start_time)).isoformat()
+                    event_data['signup_lock'] = (next_date + (signup_lock - start_time)).isoformat()
+                    event_data['signup_close'] = (next_date + (signup_close - start_time)).isoformat()
+                    event_data['shifts'] = [
+                        {
+                            'name': shift['name'],
+                            'capacity': shift['capacity'],
+                            'start_time': (next_date + (shift['start_time'] - start_time)).isoformat(),
+                            'end_time': (next_date + (shift['end_time'] - start_time)).isoformat()
+                        }
+                        for shift in parsed_shifts
+                    ]
+                    print(event_data)
+                    response = self.create_single_event(event_data)
+                    if response.status_code != status.HTTP_201_CREATED:
+                        return response
+
+                current_date += week_interval
+
+            return Response("Recurring events created", status=status.HTTP_201_CREATED)
+
+        except ValueError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         recurrence = Recurrence.objects.create()
         print(recurrence.id)
         data['recurrence'] = recurrence.id

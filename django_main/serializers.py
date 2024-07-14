@@ -45,7 +45,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'start_time', 'end_time', 'signup_lock', 'signup_close', 'event_coordinator', 'location', 'categories', 'category_objects', 'shifts', 'recurrence', 'driving']
+        fields = ['title', 'description', 'start_time', 'end_time', 'signup_lock', 'signup_close', 'location', 'categories', 'category_objects', 'shifts', 'recurrence', 'driving']
     
     def create(self, validated_data):
         categories_data = validated_data.pop('categories', [])
