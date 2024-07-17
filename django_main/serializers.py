@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from apo.models import Shift, Event, Category, Recurrence
+from apo.models import Shift, Event, Category, Recurrence, Requirement
 from django.utils import timezone
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -86,3 +86,8 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("An event must have at least one shift.")
         
         return data
+    
+class RequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requirement
+        fields = ['hours', 'category']

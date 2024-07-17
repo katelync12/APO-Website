@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 from datetime import datetime
 from rest_framework.response import Response
-from django_main.serializers import EventSerializer, CategorySerializer
-from apo.models import Category, Recurrence
+from django_main.serializers import EventSerializer, CategorySerializer, RequirementSerializer
+from apo.models import Category, Recurrence, Requirement
 from django.utils import timezone
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from dateutil import parser
@@ -219,4 +219,7 @@ class CreateEventView(APIView):
         for field, field_errors in errors.items():
             formatted_errors.append(field_errors)
         return formatted_errors
-        
+    
+class RequirementsListView(generics.ListAPIView):
+    queryset = Requirement.objects.all()
+    serializer_class = RequirementSerializer
