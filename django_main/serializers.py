@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from apo.models import Shift, Event, Category, Recurrence
 from django.utils import timezone
+from dateutil import parser
+from dateutil.parser import parse as parse_datetime
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
         return data
     
 class ShiftSerializer(serializers.ModelSerializer):
+    start_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
+    end_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M")
     class Meta:
         model = Shift
         fields = ['name', 'capacity', 'start_time', 'end_time']
@@ -81,8 +85,23 @@ class EventSerializer(serializers.ModelSerializer):
         if data['signup_close'] <= now:
             raise serializers.ValidationError("Signup close time must be in the future.")
         
+        if data['end_time'] <= data['start_time']:
+            raise serializers.ValidationError("End time must be after start time.")
+
         shifts_data = self.initial_data.get('shifts', [])
         if not shifts_data:
             raise serializers.ValidationError("An event must have at least one shift.")
+        
+        for shift_data in shifts_data:
+            shift_start = shift_data['start_time']
+            shift_end = shift_data['end_time']
+            shift_start = parse_datetime(shift_data['start_time'])
+            shift_end = parse_datetime(shift_data['end_time'])
+            if shift_start < data['start_time']:
+                raise serializers.ValidationError("Shift start time must be equal or greater than the event start time.")
+            if shift_end > data['end_time']:
+                raise serializers.ValidationError("Shift end time must be equal or less than the event end time.")
+            if shift_end <= shift_start:
+                raise serializers.ValidationError("Shift end time must be after start time.")
         
         return data

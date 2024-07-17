@@ -129,7 +129,6 @@ class CreateEventView(APIView):
                 for day in days_of_week:
                     diff = (day - (current_date.weekday() + 1) % 7) % 7
                     next_date = current_date + timedelta(days=diff)
-                    #next_date = current_date + timedelta(days=(day - current_date.weekday() + 7) % 7)
                     if next_date > recurrence_end:
                         continue
                     
@@ -159,61 +158,7 @@ class CreateEventView(APIView):
         except ValueError as e:
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        recurrence = Recurrence.objects.create()
-        print(recurrence.id)
-        data['recurrence'] = recurrence.id
-        
-
-        try:
-            start_time = parser.isoparse(data['start_time'])
-            end_time = parser.isoparse(data['end_time'])
-            signup_lock = parser.isoparse(data['signup_lock'])
-            signup_close = parser.isoparse(data['signup_close'])
-            recurrence_end = parser.isoparse(recurrence_end)
-
-            shifts = data.get('shifts', [])
-            parsed_shifts = []
-            for shift in shifts:
-                shift_start_time = parser.isoparse(shift['start_time'])
-                shift_end_time = parser.isoparse(shift['end_time'])
-                parsed_shifts.append({
-                    'name': shift.get('name', ''),
-                    'capacity': shift.get('capacity', -1),
-                    'start_time': shift_start_time,
-                    'end_time': shift_end_time
-                })
-
-            while start_time <= recurrence_end:
-                event_data = data.copy()
-                event_data['start_time'] = start_time.isoformat()
-                event_data['end_time'] = end_time.isoformat()
-                event_data['signup_lock'] = signup_lock.isoformat()
-                event_data['signup_close'] = signup_close.isoformat()
-                event_data['shifts'] = parsed_shifts
-                print(event_data)
-                response = self.create_single_event(event_data)
-                if response.status_code != status.HTTP_201_CREATED:
-                    return response
-
-            # Increment the times by the recurrence_interval 
-                start_time += recurrence_interval
-                end_time += recurrence_interval
-                signup_lock += recurrence_interval
-                signup_close += recurrence_interval
-                updated_shifts = []
-                for shift in parsed_shifts:
-                    updated_shifts.append({
-                        'name': shift['name'],
-                        'capacity': shift['capacity'],
-                        'start_time': shift['start_time'] + recurrence_interval,
-                        'end_time': shift['end_time'] + recurrence_interval
-                    })
-                parsed_shifts = updated_shifts
-
-            return Response("Recurring events created", status=status.HTTP_201_CREATED)
-
-        except ValueError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+       
     def format_errors(self, errors):
         formatted_errors = []
         for field, field_errors in errors.items():
