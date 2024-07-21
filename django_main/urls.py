@@ -31,6 +31,7 @@ urlpatterns = [
     re_path('api/login', authentication_views.login),
     re_path('api/test_token', authentication_views.test_token),
     re_path('api/create_event', views.CreateEventView.as_view()),
+    re_path('api/create_profile', views.CreateProfileView.as_view()),
     re_path('api/add_category', views.add_category),
     re_path('api/get_categories', views.get_categories),
     # path('google-auth/', authentic at    ion_views.google_auth_redirect),

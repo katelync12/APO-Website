@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from apo.models import Shift, Event, Category, Recurrence
+from apo.models import Shift, Event, Category, Recurrence, UserProfile, Membership
 from django.utils import timezone
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -86,3 +86,26 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("An event must have at least one shift.")
         
         return data
+    
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    middle_name = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    school_email = serializers.EmailField()
+    personal_email = serializers.EmailField()
+    discord_username = serializers.CharField(max_length=50)
+    phone_number = serializers.CharField()
+    birthday = serializers.DateField(format="%Y-%m-%d")
+    pronouns = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    dietary_restrictions = serializers.CharField(required=False, allow_blank=True)
+    additional_info = serializers.CharField(required=False, allow_blank=True)
+    profile_picture = serializers.ImageField()
+    membership = serializers.PrimaryKeyRelatedField(queryset=Membership.objects.all(), allow_null=True, required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'user', 'middle_name', 'school_email', 'personal_email', 'discord_username', 
+            'phone_number', 'birthday', 'pronouns', 'dietary_restrictions', 'additional_info', 
+            'profile_picture', 'membership'
+        ]

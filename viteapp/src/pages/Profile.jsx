@@ -32,6 +32,7 @@ function Profile() {
 
   // Handlers for personal info changes
   const handlePersonalInfoChange = (e) => {
+    console.log("handling personal info change")
     const { name, value } = e.target;
     setPersonalInfo({ ...personalInfo, [name]: value });
   };
@@ -136,15 +137,11 @@ function Profile() {
   };
 
   const handleSubmit = (e) => {
+    console.log("entering handle submit")
+    console.log("new code")
     e.preventDefault();
-
-    const phoneNumberPattern = /^\d{10}$/;
-    if (!phoneNumberPattern.test(profile.phoneNumber)) {
-      setPhoneError("Phone number must be exactly 10 digits and contain only numbers.");
-      return;
-    } else {
-      setPhoneError("");
-    }
+    console.log("after prevent default")
+    console.log("after phone number")
 
     const formData = new FormData();
     for (const key in profile) {
@@ -153,14 +150,48 @@ function Profile() {
     if (profile.profilePicture) {
       formData.append("profilePicture", profile.profilePicture);
     }
+    console.log("before fetch")
 
-    axios.put("/api/update_profile/", formData)
-      .then(response => {
-        console.log("Profile updated successfully", response.data);
-      })
-      .catch(error => {
-        console.error("There was an error updating the profile!", error);
-      });
+    fetch("/api/create_profile/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Add profile information
+        firstName,
+        preferredName,
+        middleName,
+        lastName,
+        schoolEmail,
+        personalEmail,
+        discordUsername,
+        phoneNumber,
+        birthday,
+        pronouns,
+        dietaryRestrictions,
+        additionalInfo,
+        profilePicture,
+        pledgeClass,
+        password,
+      }),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((errorData) => {
+          throw new Error(errorData.detail || 'Error creating profile');
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Profile Created");
+      alert("Profile created!");
+    })
+    .catch((error) => {
+      console.error("Profile creation error: ", error);
+      alert(error.message);
+    });
   };
 
 

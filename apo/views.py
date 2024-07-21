@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
 from rest_framework.response import Response
-from django_main.serializers import EventSerializer, CategorySerializer
+from django_main.serializers import EventSerializer, CategorySerializer, UserProfileSerializer
 from apo.models import Category, Recurrence
 from django.utils import timezone
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -57,6 +57,26 @@ def get_categories(request):
     categories = Category.objects.all()
     category_serializer = CategorySerializer(categories, many=True)
     return Response(category_serializer.data, status=status.HTTP_200_OK)
+
+class CreateProfileView(APIView):
+    def post(self, request):
+        print(request.data)
+        data = request.data
+        profile_serializer = UserProfileSerializer(data=data)
+        if profile_serializer.is_valid():
+            profile_serializer.save()
+            return Response("Passed", status=status.HTTP_201_CREATED)
+        else:
+            print("Failed")
+            formatted_errors = self.format_errors(profile_serializer.errors)
+            return Response({'detail': formatted_errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def format_errors(self, errors):
+        formatted_errors = []
+        for field, field_errors in errors.items():
+            formatted_errors.append(field_errors)
+        return formatted_errors
+
     
 class CreateEventView(APIView):
     def post(self, request):
