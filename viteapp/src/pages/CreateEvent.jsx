@@ -78,9 +78,7 @@ const handleIntervalChange = (e) => {
     if (start_time) {
       const startDate = new Date(start_time);
       const dayOfWeek = startDate.getDay();
-      setSelectedDays((prevSelectedDays) =>
-        prevSelectedDays.includes(dayOfWeek) ? prevSelectedDays : [...prevSelectedDays, dayOfWeek]
-      );
+      setSelectedDays([dayOfWeek]);
     }
   }, [start_time]);
 ``
