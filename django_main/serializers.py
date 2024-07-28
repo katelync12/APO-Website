@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Check that the start is before the stop.
+        Check that the email matches the username
         """
         if data['email'] != data['username']:
             raise serializers.ValidationError("email must match username")
@@ -58,8 +58,8 @@ class EventSerializer(serializers.ModelSerializer):
         categories_data = validated_data.pop('categories', [])
         shifts_data = validated_data.pop('shifts')
         #recurrence_data = validated_data.pop('recurrence', None)
-        print("HELLO! THIS IS VALIDATED DATA")
-        print(validated_data)
+        # print("HELLO! THIS IS VALIDATED DATA")
+        # print(validated_data)
         event = Event.objects.create(**validated_data)
         for shift_data in shifts_data:
             Shift.objects.create(event=event, **shift_data)
