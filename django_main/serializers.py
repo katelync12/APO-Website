@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from apo.models import Shift, Event, Category, Recurrence
+from apo.models import Shift, Event, Category, Recurrence, Requirement
 from django.utils import timezone
 from dateutil import parser
 from dateutil.parser import parse as parse_datetime
@@ -100,7 +100,7 @@ class EventSerializer(serializers.ModelSerializer):
         shifts_data = self.initial_data.get('shifts', [])
         if not shifts_data:
             raise serializers.ValidationError("An event must have at least one shift.")
-        
+
         for shift_data in shifts_data:
             shift_start = shift_data['start_time']
             shift_end = shift_data['end_time']
@@ -114,3 +114,8 @@ class EventSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Shift end time must be after start time.")
         
         return data
+
+class RequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requirement
+        fields = ['hours', 'category']
