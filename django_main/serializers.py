@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Check that the start is before the stop.
+        Check that the email matches the username
         """
         if data['email'] != data['username']:
             raise serializers.ValidationError("email must match username")
@@ -32,6 +32,13 @@ class ShiftSerializer(serializers.ModelSerializer):
         model = Shift
         fields = ['name', 'capacity', 'start_time', 'end_time']
     def validate(self, data):
+        now = timezone.now()
+        if data['start_time'] <= now:
+            raise serializers.ValidationError("Start time must be in the future.")
+        if data['end_time'] <= now:
+            raise serializers.ValidationError("End time must be in the future.")
+        if data['start_time'] > data['end_time']:
+            raise serializers.ValidationError("Start time must be before end time.")
         print("shift validated!")
         return data
         
@@ -55,8 +62,8 @@ class EventSerializer(serializers.ModelSerializer):
         categories_data = validated_data.pop('categories', [])
         shifts_data = validated_data.pop('shifts')
         #recurrence_data = validated_data.pop('recurrence', None)
-        print("HELLO! THIS IS VALIDATED DATA")
-        print(validated_data)
+        # print("HELLO! THIS IS VALIDATED DATA")
+        # print(validated_data)
         event = Event.objects.create(**validated_data)
         for shift_data in shifts_data:
             Shift.objects.create(event=event, **shift_data)
@@ -84,10 +91,12 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Signup lock time must be in the future.")
         if data['signup_close'] <= now:
             raise serializers.ValidationError("Signup close time must be in the future.")
-        
-        if data['end_time'] <= data['start_time']:
-            raise serializers.ValidationError("End time must be after start time.")
-
+        if data['start_time'] > data['end_time']:
+            raise serializers.ValidationError("Start time must be before end time.")
+        # not sure if this is correct, check with Katelyn and Andrew
+        #if data['signup_lock'] > data['signup_close']:
+            #raise serializers.ValidationError("Sign Up lock time must be before Sign Up close time.")
+          
         shifts_data = self.initial_data.get('shifts', [])
         if not shifts_data:
             raise serializers.ValidationError("An event must have at least one shift.")
