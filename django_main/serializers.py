@@ -32,6 +32,13 @@ class ShiftSerializer(serializers.ModelSerializer):
         model = Shift
         fields = ['name', 'capacity', 'start_time', 'end_time']
     def validate(self, data):
+        now = timezone.now()
+        if data['start_time'] <= now:
+            raise serializers.ValidationError("Start time must be in the future.")
+        if data['end_time'] <= now:
+            raise serializers.ValidationError("End time must be in the future.")
+        if data['start_time'] > data['end_time']:
+            raise serializers.ValidationError("Start time must be before end time.")
         print("shift validated!")
         return data
         
@@ -84,10 +91,10 @@ class EventSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Signup lock time must be in the future.")
         if data['signup_close'] <= now:
             raise serializers.ValidationError("Signup close time must be in the future.")
-        
-        if data['end_time'] <= data['start_time']:
-            raise serializers.ValidationError("End time must be after start time.")
-
+        if data['start_time'] > data['end_time']:
+            raise serializers.ValidationError("Start time must be before end time.")
+        if data['signup_lock'] > data['signup_close']:
+            raise serializers.ValidationError("Sign Up lock time must be before Sign Up close time.")
         shifts_data = self.initial_data.get('shifts', [])
         if not shifts_data:
             raise serializers.ValidationError("An event must have at least one shift.")
