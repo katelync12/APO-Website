@@ -2,6 +2,8 @@ import CustomButton from "./CustomButton";
 import PrivateRoute from "./PrivateRouter";
 import NavBar from "./NavBar";
 import PermissionRoute from "./PermissionRouter";
+import CategoryDropdown from "./CategoryDropdown";
+import CreateCategory from "./CreateCategory";
 import CalendarToolbar from "./CalendarToolbar";
 import CalendarFilter from "./CalendarFilter";
 import Leaderboard from "./Leaderboard";
@@ -10,7 +12,7 @@ export {
   CustomButton,
   PrivateRoute,
   NavBar,
-  PermissionRoute,
+  PermissionRoute, CategoryDropdown, CreateCategory,
   CalendarToolbar,
   CalendarFilter,
   Leaderboard,

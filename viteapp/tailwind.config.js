@@ -8,6 +8,9 @@ export default {
   mode: "jit",
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Open Sans', 'sans-serif'],
+      },
       colors: {
         "royal-blue": "#0033ab",
         "royal-blue-700": "#00298a",

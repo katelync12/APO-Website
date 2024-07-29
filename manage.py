@@ -12,7 +12,7 @@ def main():
         npm_build = subprocess.Popen(["npm", "run", "build"], cwd="viteapp/")
     npm_build.wait()  # Wait for npm build to finish
     
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django-main.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_main.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

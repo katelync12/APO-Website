@@ -18,6 +18,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 from django.urls import re_path
 from . import authentication_views
+from apo import views
 from django.conf.urls import include
 
 urlpatterns = [
@@ -25,11 +26,17 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('api/checkpermission', authentication_views.check_permission),
     #path('accounts/profile/', authentication_views.profile),
-    #path("accounts/", include("allauth.urls")),
+    #path("accounts/", includ e("a llauth.ur ls")), 
     re_path('api/signup', authentication_views.signup),
     re_path('api/login', authentication_views.login),
     re_path('api/test_token', authentication_views.test_token),
-    # path('google-auth/', authentication_views.google_auth_redirect),
-    #This acts as a catch-all
+    re_path('api/create_event', views.CreateEventView.as_view()),
+    re_path('api/add_category', views.add_category),
+    re_path('api/get_categories', views.get_categories),
+    path('api/requirements', views.RequirementsListView.as_view()),
+    path('api/get_event/', views.get_event),
+    path('api/delete_event/', views.delete_event),
+    # path('google-auth/', authentic at    ion_views.google_auth_redirect),
+    #This acts as a catch-all    
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
 ]
