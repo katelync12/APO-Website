@@ -36,6 +36,7 @@ urlpatterns = [
     path('api/requirements', views.RequirementsListView.as_view()),
     path('api/get_event/', views.get_event),
     path('api/delete_event/', views.delete_event),
+    path('api/get_calendar_events/', views.get_calendar_events),
     # path('google-auth/', authentic at    ion_views.google_auth_redirect),
     #This acts as a catch-all    
     re_path(r'^.*/$', TemplateView.as_view(template_name='index.html')),
