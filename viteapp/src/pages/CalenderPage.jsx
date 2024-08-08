@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -9,16 +9,16 @@ import { MOCK_EVENTS } from "../constants/event";
 const localizer = momentLocalizer(moment);
 
 function CalendarPage() {
+  const [events, setEvents] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [view, setView] = useState(Views.MONTH); // Default view
   const [selectedDate, setSelectedDate] = useState(new Date()); // State for selected date
+  const [loading, setLoading] = useState(false);
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const isLaptop = useMediaQuery({ minWidth: 641 }); // Added media query for laptop
 
-  const uniqueCategories = [
-    ...new Set(MOCK_EVENTS.map((event) => event.category)),
-  ];
+  const uniqueCategories = [...new Set(events.map((event) => event.category))];
 
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) =>
@@ -41,7 +41,8 @@ function CalendarPage() {
     Breakfast: "#FF33A8",
   };
 
-  const filteredEvents = MOCK_EVENTS.filter(
+  // Temporary, will be replaced with API call to Database
+  const filteredMockEvents = MOCK_EVENTS.filter(
     (event) =>
       selectedCategories.length === 0 ||
       selectedCategories.includes(event.category)
@@ -55,9 +56,107 @@ function CalendarPage() {
     id: event.id,
   }));
 
+  const uniqueMockCategories = [
+    ...new Set(MOCK_EVENTS.map((event) => event.category)),
+  ];
+
+  const handleMockCheckboxChange = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
   const handleSelectEvent = (event) => {
     window.location.href = `/event/${event.id}`;
   };
+
+  // fetch events data from Database
+  const fetchEvents = useCallback(async () => {
+    try {
+      // Prevent making another request if one is already in progress
+      if (loading) return;
+
+      setLoading(true);
+
+      // Calculate the start and end dates based on the selected view
+      let start, end;
+      if (view === Views.MONTH) {
+        start = moment(selectedDate).startOf("month").toISOString();
+        end = moment(selectedDate).endOf("month").toISOString();
+      } else if (view === Views.WEEK) {
+        start = moment(selectedDate).startOf("week").toISOString();
+        end = moment(selectedDate).endOf("week").toISOString();
+      } else if (view === Views.DAY) {
+        start = moment(selectedDate).startOf("day").toISOString();
+        end = moment(selectedDate).endOf("day").toISOString();
+      } else if (view === Views.AGENDA) {
+        // Set a reasonable range for agenda view, e.g., one month
+        start = moment(selectedDate).startOf("month").toISOString();
+        end = moment(selectedDate).endOf("month").toISOString();
+      }
+
+      // Make the GET request using fetch
+      const response = await fetch(
+        `/api/get_calendar_events?start_date=${encodeURIComponent(
+          start
+        )}&end_date=${encodeURIComponent(end)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Check if the response is okay
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Parse the JSON response
+      const data = await response.json();
+
+      console.log("Data:", JSON.stringify(data, null, 2)); // Pretty-prints the JSON
+
+      const fetchedEvents = data.map((event) => ({
+        ...event,
+        start: new Date(event.start),
+        end: new Date(event.end),
+        color: categoryColors[event.category] || "#000000",
+        id: event.id,
+      }));
+
+      setEvents(fetchedEvents);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false); // Ensure loading is reset
+    }
+  }, [view, selectedDate, setEvents]);
+
+  useEffect(() => {
+    if (!loading) {
+      fetchEvents();
+    }
+  }, [fetchEvents, loading]);
+
+  const filteredEvents = events
+    .filter(
+      (event) =>
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(event.category)
+    )
+    .map((event) => ({
+      title: !event.allDay
+        ? `${moment(event.start).format("HH:mm")} - ${event.title}`
+        : event.title,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      color: categoryColors[event.category],
+      id: event.id,
+    }));
 
   return (
     <div className="h-screen w-screen flex flex-col items-center bg-white-200">
