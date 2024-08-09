@@ -3,23 +3,31 @@ import { useMediaQuery } from "react-responsive";
 import { Views } from "react-big-calendar";
 import moment from "moment";
 
-const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
+const CalendarToolbar = ({ date, view, onNavigate, onView, loading }) => {
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
   const handleViewChange = (e) => {
-    onView(e.target.value);
+    if (!loading) {
+      onView(e.target.value);
+    }
   };
 
   const goToBack = () => {
-    onNavigate("PREV");
+    if (!loading) {
+      onNavigate("PREV");
+    }
   };
 
   const goToNext = () => {
-    onNavigate("NEXT");
+    if (!loading) {
+      onNavigate("NEXT");
+    }
   };
 
   const goToToday = () => {
-    onNavigate("TODAY");
+    if (!loading) {
+      onNavigate("TODAY");
+    }
   };
 
   // Function to get the label based on view and date
@@ -61,7 +69,11 @@ const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
   };
 
   return (
-    <div className="rbc-toolbar w-full flex items-center justify-between">
+    <div
+      className={`rbc-toolbar w-full flex items-center justify-between ${
+        loading ? "opacity-50 pointer-events-none" : ""
+      }`}
+    >
       {isMobile ? (
         <div className="mobile-controls w-full flex items-center space-x-4">
           {/* Navigator: Back Today Next */}
@@ -69,18 +81,21 @@ const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
             <button
               onClick={goToBack}
               className="bg-gray-300 rounded h-7 w-6 px-2 flex items-center"
+              disabled={loading} // Disable button when loading is true
             >
               <span className="relative top-[-3px] right-[5px]">{`<`}</span>
             </button>
             <button
               onClick={goToToday}
               className="bg-gray-300 rounded h-7 px-2 flex items-center"
+              disabled={loading} // Disable button when loading is true
             >
               <span className="relative top-[-3px]">Today</span>
             </button>
             <button
               onClick={goToNext}
               className="bg-gray-300 rounded h-7 w-6 px-2 flex items-center"
+              disabled={loading} // Disable button when loading is true
             >
               <span className="relative top-[-3px] right-[5px]">{`>`}</span>
             </button>
@@ -97,6 +112,7 @@ const CalendarToolbar = ({ date, view, onNavigate, onView }) => {
               value={view}
               onChange={handleViewChange}
               className="px-2 py-1 bg-white-200 text-gray-800 text-medium rounded border border-gray-300"
+              disabled={loading} // Disable button when loading is true
             >
               <option value={Views.MONTH}>Month</option>
               <option value={Views.WEEK}>Week</option>

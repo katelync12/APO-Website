@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from datetime import datetime
 from rest_framework.response import Response
 from django_main.serializers import EventSerializer, CategorySerializer, RequirementSerializer
-from apo.models import Category, Recurrence, Requirement, Event
+from apo.models import Category, Recurrence, Requirement, Event, Shift
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -130,15 +130,15 @@ def get_calendar_events(request):
         start_date = parse_datetime(start_date_str) if start_date_str else None
         end_date = parse_datetime(end_date_str) if end_date_str else None
         
-        print(f"start_date: {start_date}")
-        print(f"end_date: {end_date}")
+        # print(f"start_date: {start_date}")
+        # print(f"end_date: {end_date}")
         
         if start_date and end_date:
             # start_date = timezone.make_aware(start_date, timezone.utc)
             # end_date = timezone.make_aware(end_date, timezone.utc)
             
             events = Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
-            print(f"events: {events}")
+            # print(f"events: {events}")
         else:
             return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -153,8 +153,8 @@ def get_calendar_events(request):
             }
             for event in events
         ]
-        print(f"events_data: {events_data}")
-        logger.debug(f"Events data: {events_data}")
+        # print(f"events_data: {events_data}")
+        # logger.debug(f"Events data: {events_data}")
         
         return Response(events_data, status=status.HTTP_200_OK)
     except ValueError:

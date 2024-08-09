@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { NavBar, CalendarToolbar, CalendarFilter } from "../components";
+import {
+  NavBar,
+  CalendarToolbar,
+  CalendarFilter,
+  LoadingSpinner,
+} from "../components";
 import { useMediaQuery } from "react-responsive";
 import { MOCK_EVENTS } from "../constants/event";
 
@@ -74,12 +79,11 @@ function CalendarPage() {
 
   // fetch events data from Database
   const fetchEvents = useCallback(async () => {
+    // Prevent making another request if one is already in progress
+    if (loading) return;
+    setLoading(true);
+
     try {
-      // Prevent making another request if one is already in progress
-      if (loading) return;
-
-      setLoading(true);
-
       // Calculate the start and end dates based on the selected view
       let start, end;
       if (view === Views.MONTH) {
@@ -134,13 +138,11 @@ function CalendarPage() {
     } finally {
       setLoading(false); // Ensure loading is reset
     }
-  }, [view, selectedDate, setEvents]);
+  }, [view, selectedDate]);
 
   useEffect(() => {
-    if (!loading) {
-      fetchEvents();
-    }
-  }, [fetchEvents, loading]);
+    fetchEvents();
+  }, [fetchEvents]);
 
   const filteredEvents = events
     .filter(
@@ -163,6 +165,19 @@ function CalendarPage() {
       <NavBar />
 
       <div className="flex flex-col justify-center w-full px-10 py-5">
+        <div className="flex items-center justify-center w-full">
+          {loading && (
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center z-10 pointer-events-none">
+              {/* Overlay */}
+              <div className="absolute top-0 left-0 w-full h-full bg-gray-500 opacity-20"></div>
+              {/* Spinner and Text */}
+              <div className="relative flex items-center justify-center">
+                <LoadingSpinner />
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Calendar Filters */}
         <div className="flex w-full">
           <CalendarFilter
@@ -170,10 +185,14 @@ function CalendarPage() {
             selectedCategories={selectedCategories}
             handleCheckboxChange={handleCheckboxChange}
             categoryColors={categoryColors}
+            loading={loading}
           />
         </div>
-
-        <div className="App">
+        <div
+          className={`App relative ${
+            loading ? "pointer-events-none opacity-50" : ""
+          }`}
+        >
           <Calendar
             localizer={localizer}
             startAccessor="start"
@@ -195,7 +214,13 @@ function CalendarPage() {
             date={selectedDate} // Pass selectedDate to the Calendar
             onNavigate={(date) => setSelectedDate(date)} // Update selectedDate on navigate
             components={
-              isMobile ? { toolbar: CalendarToolbar } : {} // Use the custom toolbar on mobile for now
+              isMobile
+                ? {
+                    toolbar: (props) => (
+                      <CalendarToolbar {...props} loading={loading} />
+                    ),
+                  }
+                : {} // Use the custom toolbar on mobile for now
             }
           />
         </div>
