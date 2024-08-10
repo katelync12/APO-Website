@@ -59,7 +59,7 @@ Changes will be shown after this command is complete. You can call this while th
 Create Python Venv:
 
 ```
-python3 -m venv venv
+python3.11 -m venv venv
 sudo source ./venv/bin/activate
 ```
 
