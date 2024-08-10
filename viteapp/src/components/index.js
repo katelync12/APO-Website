@@ -6,6 +6,9 @@ import CategoryDropdown from "./CategoryDropdown";
 import CreateCategory from "./CreateCategory";
 import CalendarToolbar from "./CalendarToolbar";
 import CalendarFilter from "./CalendarFilter";
+import PersonalInfo from "./PersonalInfo";
+import ContactInfo from "./ContactInfo";
+import PasswordInfo from "./PasswordInfo";
 
 export {
   CustomButton,
@@ -14,4 +17,7 @@ export {
   PermissionRoute, CategoryDropdown, CreateCategory,
   CalendarToolbar,
   CalendarFilter,
+  PersonalInfo,
+  ContactInfo,
+  PasswordInfo,
 };
