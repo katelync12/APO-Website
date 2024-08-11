@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavBar, PersonalInfo, ContactInfo, PasswordInfo} from "../components";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 
+
 function Profile() {
   const [activeTab, setActiveTab] = useState("personalInfo");
 

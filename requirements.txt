@@ -13,3 +13,4 @@ django-allauth[socialaccount]~=0.63.3
 PyJWT~=2.8.0
 cryptography~=42.0.8
 python-dateutil~=2.9.0
+Pillow==10.4.0

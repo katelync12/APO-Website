@@ -9,6 +9,7 @@ import CalendarFilter from "./CalendarFilter";
 import PersonalInfo from "./PersonalInfo";
 import ContactInfo from "./ContactInfo";
 import PasswordInfo from "./PasswordInfo";
+import UserInitializedRoute from "./UserInitializedRouter";
 
 export {
   CustomButton,
@@ -20,4 +21,5 @@ export {
   PersonalInfo,
   ContactInfo,
   PasswordInfo,
+  UserInitializedRoute
 };

@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token # type: ignore
 from .serializers import UserSerializer
+from django.contrib.auth import update_session_auth_hash
 
 #The username and email field MUST match
 @api_view(['POST'])
@@ -68,6 +69,16 @@ def test_token(request):
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def check_user_initialized(request):
+    print(request.user.username)
+    if UserProfile.objects.filter(user=request.user).exists():
+        return Response("Profile exists.")
+    else:
+        return Response({"error": "Profile does not exist."}, status=403)
+    
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
 def check_permission(request):
     permission_name = request.GET.get('permission')
     print(permission_name)
@@ -76,7 +87,8 @@ def check_permission(request):
         return Response({'detail': 'Permission name not provided.'}, status=400)
 
     user = request.user
-
+    if not UserProfile.objects.filter(user=request.user).exists():
+        return Response({'detail': 'User is not initialized yet.'}, status=403)
     # Check if the user has the specified permission
     has_permission = user.has_perm(permission_name)
 
@@ -87,6 +99,27 @@ def check_permission(request):
         print("User does not have the permission.")
         return Response({'detail': 'User does not have the permission.'}, status=403)
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not user.check_password(old_password):
+        return Response({'detail': 'Old password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if old_password == new_password:
+        return Response({'detail': 'New password cannot be the same as the old password.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+
+    # Update the session with the new password hash to keep the user logged in
+    update_session_auth_hash(request, user)
+
+    return Response({'detail': 'Password changed successfully.'}, status=status.HTTP_200_OK)
 # @api_view(['GET'])
 # def google_auth_redirect(request):
 #     return redirect('/accounts/google/login/')

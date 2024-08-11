@@ -5,12 +5,16 @@ from rest_framework import status
 from datetime import datetime
 from rest_framework.response import Response
 from django_main.serializers import EventSerializer, CategorySerializer, UserProfileSerializer
-from apo.models import Category, Recurrence
+from apo.models import *
 from django.utils import timezone
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from dateutil import parser
 from datetime import timedelta
-
+from django.core.files.base import ContentFile
+import base64
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from phonenumber_field.phonenumber import PhoneNumber
+from django.conf import settings
 
 def home(request):
     return render(request, 'viteapp/index.html')
@@ -18,6 +22,146 @@ def home(request):
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+
+class CreateUserProfile(APIView):
+    def post(self, request):
+        user = request.user
+
+        if not user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            data = request.data
+            user.first_name = request.data.get('firstName', user.first_name)
+            user.last_name = request.data.get('lastName', user.last_name)
+            user.save()
+            UserProfile.objects.create(
+                user=user,
+                middle_name=data.get('middleName'),
+                discord_username=data.get('discordUsername'),
+                phone_number=data.get('phoneNumber'),
+                birthday=data.get('birthday'),
+                pronouns=data.get('pronouns'),
+                dietary_restrictions=data.get('dietaryRestrictions'),
+                additional_info=data.get('additionalInfo'),
+                profile_picture=request.FILES.get('profilePicture', None)
+            )
+
+            return Response({'detail': 'User profile created/updated successfully.'}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'An error occurred while creating/updating the user profile.'}, status=status.HTTP_400_BAD_REQUEST)
+class ContactInfo(APIView):
+    def get(self, request):
+        # Get the user from the request 
+        print(request.user)
+        user = request.user
+
+        # Initialize personal info with default values
+        contact_info = {
+            "phoneNumber": "",
+            "discordUsername": "",
+        }
+
+        # Try to retrieve the associated UserProfile, if it exists
+        try:
+            profile = user.profile  # Using the related_name 'profile'
+            
+            # Update personal info with profile data 
+            contact_info.update({
+                "phoneNumber": str(profile.phone_number) or "",
+                "discordUsername": profile.discord_username or "",
+            })
+        except UserProfile.DoesNotExist:
+            # If the user doesn't have a profile, we use the default values
+            pass
+
+        return Response(contact_info, status=status.HTTP_200_OK)
+    def post(self, request):
+        user = request.user
+
+        # Check if UserProfile exists
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return Response({"message": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+
+        # Update UserProfile model fields
+        user_profile.phone_number = request.data.get("phoneNumber", user_profile.phone_number)
+        user_profile.discord_username = request.data.get("discordUsername", user_profile.discord_username)
+       
+        user_profile.save()
+
+        return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+
+class ProfileInfo(APIView):
+    def get(self, request):
+        # Get the user from the request 
+        print(request.user)
+        user = request.user
+
+        # Initialize personal info with default values
+        personal_info = {
+            "firstName": user.first_name,
+            "middleName": "",
+            "lastName": user.last_name,
+            "birthday": "",
+            "pronouns": "",
+            "dietaryRestrictions": "",
+            "additionalInfo": "",
+            "profilePicture": None,
+        }
+
+        # Try to retrieve the associated UserProfile, if it exists
+        try:
+            profile = user.profile  # Using the related_name 'profile'
+            
+            # Update personal info with profile data 
+            personal_info.update({
+                "middleName": profile.middle_name or "",
+                "birthday": profile.birthday or "",
+                "pronouns": profile.pronouns or "",
+                "dietaryRestrictions": profile.dietary_restrictions or "",
+                "additionalInfo": profile.additional_info or "",
+                "profilePicture": f"{settings.MEDIA_URL}{profile.profile_picture}" if profile.profile_picture else None,
+            })
+            print(personal_info)
+        except UserProfile.DoesNotExist:
+            # If the user doesn't have a profile, we use the default values
+            pass
+
+        return Response(personal_info, status=status.HTTP_200_OK)
+    def post(self, request):
+        user = request.user
+
+        # Check if UserProfile exists
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return Response({"message": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update User model fields
+        user.first_name = request.data.get("firstName", user.first_name)
+        user.last_name = request.data.get("lastName", user.last_name)
+        user.save()
+
+        # Update UserProfile model fields
+        user_profile.middle_name = request.data.get("middleName", user_profile.middle_name)
+        user_profile.birthday = request.data.get("birthday", user_profile.birthday)
+        user_profile.pronouns = request.data.get("pronouns", user_profile.pronouns)
+        user_profile.dietary_restrictions = request.data.get("dietaryRestrictions", user_profile.dietary_restrictions)
+        user_profile.additional_info = request.data.get("additionalInfo", user_profile.additional_info)
+
+        if "profilePicture" in request.FILES:
+            user_profile.profile_picture = request.FILES["profilePicture"]
+        else:
+            user_profile.profile_picture = None
+
+        user_profile.save()
+
+        return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
 
 class BaseValidationView(APIView):
     def validate_date_range(self, data):
@@ -173,62 +317,6 @@ class CreateEventView(APIView):
                         return response
 
                 current_date += week_interval
-
-            return Response("Recurring events created", status=status.HTTP_201_CREATED)
-
-        except ValueError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        recurrence = Recurrence.objects.create()
-        print(recurrence.id)
-        data['recurrence'] = recurrence.id
-        
-
-        try:
-            start_time = parser.isoparse(data['start_time'])
-            end_time = parser.isoparse(data['end_time'])
-            signup_lock = parser.isoparse(data['signup_lock'])
-            signup_close = parser.isoparse(data['signup_close'])
-            recurrence_end = parser.isoparse(recurrence_end)
-
-            shifts = data.get('shifts', [])
-            parsed_shifts = []
-            for shift in shifts:
-                shift_start_time = parser.isoparse(shift['start_time'])
-                shift_end_time = parser.isoparse(shift['end_time'])
-                parsed_shifts.append({
-                    'name': shift.get('name', ''),
-                    'capacity': shift.get('capacity', -1),
-                    'start_time': shift_start_time,
-                    'end_time': shift_end_time
-                })
-
-            while start_time <= recurrence_end:
-                event_data = data.copy()
-                event_data['start_time'] = start_time.isoformat()
-                event_data['end_time'] = end_time.isoformat()
-                event_data['signup_lock'] = signup_lock.isoformat()
-                event_data['signup_close'] = signup_close.isoformat()
-                event_data['shifts'] = parsed_shifts
-                print(event_data)
-                response = self.create_single_event(event_data)
-                if response.status_code != status.HTTP_201_CREATED:
-                    return response
-
-            # Increment the times by the recurrence_interval 
-                start_time += recurrence_interval
-                end_time += recurrence_interval
-                signup_lock += recurrence_interval
-                signup_close += recurrence_interval
-                updated_shifts = []
-                for shift in parsed_shifts:
-                    updated_shifts.append({
-                        'name': shift['name'],
-                        'capacity': shift['capacity'],
-                        'start_time': shift['start_time'] + recurrence_interval,
-                        'end_time': shift['end_time'] + recurrence_interval
-                    })
-                parsed_shifts = updated_shifts
 
             return Response("Recurring events created", status=status.HTTP_201_CREATED)
 

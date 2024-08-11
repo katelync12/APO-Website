@@ -1,28 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaImage } from "react-icons/fa";
 
 function PersonalInfo() {
   const [personalInfo, setPersonalInfo] = useState({
     firstName: "",
-    preferredName: "",
     middleName: "",
     lastName: "",
+    birthday: "",
     pronouns: "",
     dietaryRestrictions: "",
     additionalInfo: "",
     profilePicture: null,
   });
+  const [loading, setLoading] = useState(true); // Loading state
+
+
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const fetchPersonalInfo = async () => {
+      try {
+        const response = await fetch('/api/profile_info/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `token ${token}`
+          },
+          credentials: 'include'
+        });
+        const data = await response.json();
+        setPersonalInfo({
+          firstName: data.firstName,
+          middleName: data.middleName,
+          lastName: data.lastName,
+          birthday: data.birthday,
+          pronouns: data.pronouns,
+          dietaryRestrictions: data.dietaryRestrictions,
+          additionalInfo: data.additionalInfo,
+          profilePicture: data.profilePicture,
+        });
+
+        if (data.profilePicture) {
+          setProfilePicturePreview(data.profilePicture);
+        }
+      } catch (error) {
+        console.error('Error fetching personal info:', error);
+      }
+      finally {
+        setLoading(false); // Set loading to false after fetching
+      }
+    };
+
+    fetchPersonalInfo();
+  }, []);
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
     setPersonalInfo({ ...personalInfo, [name]: value });
   };
 
-  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
-
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
-    
+
     setPersonalInfo((prevInfo) => ({
       ...prevInfo,
       profilePicture: file,
@@ -43,11 +83,45 @@ function PersonalInfo() {
     }));
   };
 
+  const handleSave = async () => {
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+
+    Object.keys(personalInfo).forEach(key => {
+      formData.append(key, personalInfo[key]);
+    });
+
+    try {
+      const response = await fetch('/api/profile_info/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${token}`
+        },
+        body: formData,
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        console.log('Profile updated successfully');
+        alert("Profile updated successfully");
+      } else {
+        console.error('Failed to update profile');
+        alert("Failed to update profile");
+      }
+    } catch (error) {
+      console.error('Error saving personal info:', error);
+      alert("Failed to update profile");
+    }
+  };
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner or message
+  }
   return (
     <div className="flex flex-wrap mb-4">
       <div>
         <p className="text-blue-800 font-bold text-xl pl-2 pt-1 pb-6 uppercase">Personal Information</p>
       </div>
+      
       <div className="w-full mb-4 px-2 justify-center sm:justify-normal">
         <div className="flex flex-col items-start space-y-4">
           {profilePicturePreview ? (
@@ -106,6 +180,7 @@ function PersonalInfo() {
         </div>
       </div>
 
+      {/* Other input fields */}
       <div className="w-full md:w-1/2 px-2 mb-4">
         <label className="block text-sm font-medium text-gray-700">
           First Name <span className="text-red-500">*</span>
@@ -135,32 +210,27 @@ function PersonalInfo() {
       </div>
 
       <div className="w-full px-2 mb-4">
-        <label className="block text-sm font-medium text-gray-700">Preferred Name</label>
+        <label className="block text-sm font-medium text-gray-700">Middle Name</label>
         <input
           type="text"
-          name="preferredName"
-          value={personalInfo.preferredName}
+          name="middleName"
+          value={personalInfo.middleName}
           onChange={handlePersonalInfoChange}
           className="mt-1 p-2 block w-full border text-gray-700 border-gray-300 rounded-md bg-white"
         />
       </div>
 
       <div className="w-full md:w-1/2 px-2 mb-4">
-        <label className="block text-sm font-medium text-gray-700">Birthday</label>
+        <label className="block text-sm font-medium text-gray-700">Birthday<span className="text-red-500">*</span></label>
         <input
           type="date"
           name="birthday"
           value={personalInfo.birthday}
           onChange={handlePersonalInfoChange}
           className="mt-1 p-2 block w-full border text-gray-700 border-gray-300 rounded-md bg-white appearance-none"
+          required
         />
       </div>
-
-      <style>{`
-        input[type="date"]::-webkit-calendar-picker-indicator {
-          filter: invert(80%) sepia(10%) saturate(900%) hue-rotate(180deg);
-        }
-      `}</style>
 
       <div className="w-full md:w-1/2 px-2 mb-4">
         <label className="block text-sm font-medium text-gray-700">Pronouns</label>
@@ -189,18 +259,20 @@ function PersonalInfo() {
           Anything Else You Want People to Know
         </label>
         <textarea
-          name="anythingElse"
-          value={personalInfo.anythingElse}
+          name="additionalInfo"
+          value={personalInfo.additionalInfo}
           onChange={handlePersonalInfoChange}
           className="mt-1 p-2 block w-full border text-gray-700 border-gray-300 rounded-md bg-white"
         />
       </div>
+
       <button
-      type="button"
-      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 w-44 rounded-3xl border-blue-500"
-    >
-      Save
-    </button>
+        type="button"
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 w-44 rounded-3xl border-blue-500"
+        onClick={handleSave}
+      >
+        Save
+      </button>
     </div>
   );
 }
