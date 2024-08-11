@@ -124,22 +124,23 @@ def get_event(request):
 def get_calendar_events(request):
     try:
         # Get the start_date and end_date from the query parameters
+
         start_date_str = request.query_params.get('start_date')
         end_date_str = request.query_params.get('end_date')
 
         # Parse the dates
         start_date = parse_datetime(start_date_str) if start_date_str else None
         end_date = parse_datetime(end_date_str) if end_date_str else None
-        
-        print(f"start_date: {start_date}")
-        print(f"end_date: {end_date}")
+        #print("end query params")
+        # print(f"start_date: {start_date}")
+        # print(f"end_date: {end_date}")
         
         if start_date and end_date:
             # start_date = timezone.make_aware(start_date, timezone.utc)
             # end_date = timezone.make_aware(end_date, timezone.utc)
             
             events = Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
-            print(f"events: {events}")
+
         else:
             return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -150,12 +151,13 @@ def get_calendar_events(request):
                 "start": event.start_time.isoformat(),
                 "end": event.end_time.isoformat(),
                 "description": event.description,
-                "categories": [category.id for category in event.categories.all()],
+                "categories": event.categories.values_list('id', flat=True),
             }
             for event in events
         ]
-        print(f"events_data: {events_data}")
-        logger.debug(f"Events data: {events_data}")
+        #print("done with event_data")
+        # print(f"events_data: {events_data}")
+        # logger.debug(f"Events data: {events_data}")
         
         return Response(events_data, status=status.HTTP_200_OK)
     except ValueError:
