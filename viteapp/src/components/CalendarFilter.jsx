@@ -5,11 +5,12 @@ const CalendarFilter = ({
   selectedCategories,
   handleCheckboxChange,
   categoryColors,
+  loading,
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 640 });
 
   return (
-    <div className="calendar-filter">
+    <div className={`calendar-filter ${loading ? "loading" : ""}`}>
       <div className="filters-container flex overflow-x-auto py-2">
         {uniqueCategories.map((category, index) => (
           <label
@@ -18,6 +19,7 @@ const CalendarFilter = ({
             style={{
               backgroundColor: categoryColors[category],
               marginLeft: index === 0 ? "0" : "1px",
+              cursor: loading ? "not-allowed" : "pointer", // Disable pointer events when loading
             }}
           >
             <input
@@ -25,6 +27,7 @@ const CalendarFilter = ({
               checked={selectedCategories.includes(category)}
               onChange={() => handleCheckboxChange(category)}
               className="checkbox-input"
+              disabled={loading} // Disable the checkbox when loading is true
             />
             <span className="checkbox-text">{category}</span>
           </label>
@@ -37,6 +40,7 @@ const CalendarFilter = ({
           width: 100%; /* Ensure the component spans the full width */
           overflow-x: auto; /* Enable horizontal scrolling */
           white-space: nowrap; /* Prevent wrapping of buttons */
+          opacity: ${loading ? "0.6" : "1"}; /* Reduce opacity when loading */
         }
 
         .filters-container {
@@ -61,6 +65,10 @@ const CalendarFilter = ({
 
         .checkbox-text {
           color: white;
+        }
+
+        .checkbox-input:disabled + .checkbox-text {
+          color: #ccc; /* Change text color when disabled */
         }
       `}</style>
     </div>

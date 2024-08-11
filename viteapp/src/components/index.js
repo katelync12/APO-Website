@@ -6,6 +6,7 @@ import CategoryDropdown from "./CategoryDropdown";
 import CreateCategory from "./CreateCategory";
 import CalendarToolbar from "./CalendarToolbar";
 import CalendarFilter from "./CalendarFilter";
+import LoadingSpinner from "./LoadingSpinner";
 import PersonalInfo from "./PersonalInfo";
 import ContactInfo from "./ContactInfo";
 import PasswordInfo from "./PasswordInfo";
@@ -15,9 +16,12 @@ export {
   CustomButton,
   PrivateRoute,
   NavBar,
-  PermissionRoute, CategoryDropdown, CreateCategory,
+  PermissionRoute,
+  CategoryDropdown,
+  CreateCategory,
   CalendarToolbar,
   CalendarFilter,
+  LoadingSpinner,
   PersonalInfo,
   ContactInfo,
   PasswordInfo,

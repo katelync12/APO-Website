@@ -41,7 +41,7 @@ const NavBar = () => {
     "block px-4 py-2 hover:bg-royal-blue-800 dark:hover:bg-royal-blue-800 dark:text-gray-200 dark:hover:text-gold";
 
   return (
-    <nav className="border-gray-200 bg-navy-blue dark:bg-navy-blue dark:border-gray-700 w-full">
+    <nav className="border-gray-200 bg-navy-blue dark:bg-navy-blue dark:border-gray-700 w-full z-20">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-5 px-8">
         <a
           href="/protected"

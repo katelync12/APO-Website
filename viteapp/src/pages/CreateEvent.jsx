@@ -12,7 +12,6 @@ function CreateEvent() {
   const [description, setDescription] = useState("");
   const [signup_close, setSignUpClose] = useState("");
   const [signup_lock, setSignUpLock] = useState("");
-  const [showSignUpList, setShowSignUpList] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [shifts, setShifts] = useState([{ name: "", capacity: "", start_time: "", end_time: "" }]);
   const [showModal, setShowModal] = useState(false);
@@ -59,6 +58,28 @@ const handleIntervalChange = (e) => {
     }
   }, [containsMultipleShifts, title, start_time, end_time]);
 
+  useEffect(() => {
+    if (start_time) {
+      const startDate = new Date(start_time);
+      const dayOfWeek = startDate.getDay();
+      setSelectedDays([dayOfWeek]);
+      
+      setSignUpClose(start_time);
+      
+      const lockDate = new Date(startDate);
+      lockDate.setDate(startDate.getDate() - 1);
+      
+      const year = lockDate.getFullYear();
+      const month = String(lockDate.getMonth() + 1).padStart(2, '0');
+      const day = String(lockDate.getDate()).padStart(2, '0');
+      
+      const time = start_time.split('T')[1];
+      
+      const lockDateString = `${year}-${month}-${day}T${time}`;
+      setSignUpLock(lockDateString);
+    }
+  }, [start_time]);
+
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
   const handleAddShift = () => {
@@ -78,9 +99,7 @@ const handleIntervalChange = (e) => {
     if (start_time) {
       const startDate = new Date(start_time);
       const dayOfWeek = startDate.getDay();
-      setSelectedDays((prevSelectedDays) =>
-        prevSelectedDays.includes(dayOfWeek) ? prevSelectedDays : [...prevSelectedDays, dayOfWeek]
-      );
+      setSelectedDays([dayOfWeek]);
     }
   }, [start_time]);
 ``
@@ -250,17 +269,6 @@ const handleIntervalChange = (e) => {
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
           />
-
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Show Sign-up List</label>
-            <input
-              type="checkbox"
-              checked={showSignUpList}
-              onChange={(e) => setShowSignUpList(e.target.checked)}
-              className="mr-2 leading-tight"
-            />
-            <span>Yes</span>
-          </div>
 
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Contains Multiple Shifts</label>

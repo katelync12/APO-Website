@@ -103,6 +103,12 @@ function Requirements() {
     });
   };
 
+  async function fetchData() {
+    const response = await fetch('/api/requirements').then(
+      console.log(response)
+    );
+  }
+
   return (
     <div className="w-screen flex flex-col bg-white text-black overflow-x-hidden">
       <style>{`

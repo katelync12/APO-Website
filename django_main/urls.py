@@ -41,6 +41,10 @@ urlpatterns = [
     re_path('api/contact_info', views.ContactInfo.as_view()),
     re_path('api/change_password', authentication_views.change_password), 
     re_path('api/profile_info', views.ProfileInfo.as_view()),
+    path('api/requirements', views.RequirementsListView.as_view()),
+    path('api/get_event/', views.get_event),
+    path('api/delete_event/', views.delete_event),
+    path('api/get_calendar_events/', views.get_calendar_events),
     # path('google-auth/', authentic at    ion_views.google_auth_redirect),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

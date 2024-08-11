@@ -1,20 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 from datetime import datetime
 from rest_framework.response import Response
-from django_main.serializers import EventSerializer, CategorySerializer, UserProfileSerializer
-from apo.models import *
+from django_main.serializers import EventSerializer, CategorySerializer, RequirementSerializer, UserProfileSerializer
+from apo.models import *, Requirement, Event, Shift
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from dateutil import parser
+from django.shortcuts import get_object_or_404
 from datetime import timedelta
+import logging
 from django.core.files.base import ContentFile
 import base64
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from phonenumber_field.phonenumber import PhoneNumber
 from django.conf import settings
+logger = logging.getLogger(__name__)
 
 def home(request):
     return render(request, 'viteapp/index.html')
@@ -221,7 +225,111 @@ class CreateProfileView(APIView):
             formatted_errors.append(field_errors)
         return formatted_errors
 
+
+@api_view(['DELETE'])
+def delete_event(request):
+    try:
+        data = request.data
+        # Extract id and delete_recurring from JSON body
+        id = data.get('id')
+        print(id)
+        event = get_object_or_404(Event, id=id)
+        delete_recurring = request.data.get('delete_recurring', False)
+
+        if delete_recurring and event.recurrence:
+            # Delete all events with the same recurrence ID
+            Event.objects.filter(recurrence=event.recurrence).delete()
+            return Response({"detail": "Recurring events deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            # Delete the single event
+            event.delete()
+            return Response({"detail": "Event deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        print(e)
+        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
+@api_view(['GET'])
+def get_event(request):
+    from apo.models import Event
+    event_id = request.GET.get('id')
+    if not event_id:
+        return Response({"error": "Event ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        event = Event.objects.get(id=event_id)
+        shifts = Shift.objects.filter(event=event) 
+        event_data = {
+            "title": event.title,
+            "description": event.description,
+            "start_time": event.start_time.isoformat(),
+            "end_time": event.end_time.isoformat(),
+            "location": event.location,
+            "signup_close": event.signup_close.isoformat() if event.signup_close else None,
+            "signup_lock": event.signup_lock.isoformat() if event.signup_lock else None,
+            "driving": event.driving,
+            "categories": [category.id for category in event.categories.all()],
+            "shifts": [
+                {
+                    "id": shift.id,
+                    "name": shift.name,
+                    "capacity": shift.capacity,
+                    "start_time": shift.start_time.isoformat(),
+                    "end_time": shift.end_time.isoformat(),
+                }
+                for shift in shifts
+            ],
+            "recurrence": event.recurrence.id if event.recurrence else None
+        }
+        return Response(event_data, status=status.HTTP_200_OK)
+    except Event.DoesNotExist:
+        return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def get_calendar_events(request):
+    try:
+        # Get the start_date and end_date from the query parameters
+
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+
+        # Parse the dates
+        start_date = parse_datetime(start_date_str) if start_date_str else None
+        end_date = parse_datetime(end_date_str) if end_date_str else None
+        #print("end query params")
+        # print(f"start_date: {start_date}")
+        # print(f"end_date: {end_date}")
+        
+        if start_date and end_date:
+            # start_date = timezone.make_aware(start_date, timezone.utc)
+            # end_date = timezone.make_aware(end_date, timezone.utc)
+            
+            events = Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
+
+        else:
+            return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+
+        events_data = [
+            {
+                "id": event.id,
+                "title": event.title,
+                "start": event.start_time.isoformat(),
+                "end": event.end_time.isoformat(),
+                "description": event.description,
+                "categories": event.categories.values_list('id', flat=True),
+            }
+            for event in events
+        ]
+        #print("done with event_data")
+        # print(f"events_data: {events_data}")
+        # logger.debug(f"Events data: {events_data}")
+        
+        return Response(events_data, status=status.HTTP_200_OK)
+    except ValueError:
+        return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(f"Error: {e}")
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class CreateEventView(APIView):
     def post(self, request):
         print(request.data)
@@ -293,7 +401,6 @@ class CreateEventView(APIView):
                 for day in days_of_week:
                     diff = (day - (current_date.weekday() + 1) % 7) % 7
                     next_date = current_date + timedelta(days=diff)
-                    #next_date = current_date + timedelta(days=(day - current_date.weekday() + 7) % 7)
                     if next_date > recurrence_end:
                         continue
                     
@@ -327,4 +434,7 @@ class CreateEventView(APIView):
         for field, field_errors in errors.items():
             formatted_errors.append(field_errors)
         return formatted_errors
-        
+    
+class RequirementsListView(generics.ListAPIView):
+    queryset = Requirement.objects.all()
+    serializer_class = RequirementSerializer
