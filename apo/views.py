@@ -86,13 +86,14 @@ def delete_event(request):
     
 @api_view(['GET'])
 def get_event(request):
+    from apo.models import Event
     event_id = request.GET.get('id')
     if not event_id:
         return Response({"error": "Event ID is required"}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         event = Event.objects.get(id=event_id)
-        shifts = Shift.objects.filter(event=event)
+        shifts = Shift.objects.filter(event=event) 
         event_data = {
             "title": event.title,
             "description": event.description,
@@ -123,7 +124,7 @@ def get_event(request):
 def get_calendar_events(request):
     try:
         # Get the start_date and end_date from the query parameters
-        #print("start query params")
+
         start_date_str = request.query_params.get('start_date')
         end_date_str = request.query_params.get('end_date')
 
@@ -139,7 +140,7 @@ def get_calendar_events(request):
             # end_date = timezone.make_aware(end_date, timezone.utc)
             
             events = Event.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
-            #print(f"events: {events}")
+
         else:
             return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
 
