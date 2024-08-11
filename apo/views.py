@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from datetime import datetime
 from rest_framework.response import Response
 from django_main.serializers import EventSerializer, CategorySerializer, RequirementSerializer, UserProfileSerializer
-from apo.models import *, Requirement, Event, Shift
+from apo.models import *
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
