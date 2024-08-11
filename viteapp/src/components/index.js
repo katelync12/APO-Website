@@ -7,6 +7,10 @@ import CreateCategory from "./CreateCategory";
 import CalendarToolbar from "./CalendarToolbar";
 import CalendarFilter from "./CalendarFilter";
 import LoadingSpinner from "./LoadingSpinner";
+import PersonalInfo from "./PersonalInfo";
+import ContactInfo from "./ContactInfo";
+import PasswordInfo from "./PasswordInfo";
+import UserInitializedRoute from "./UserInitializedRouter";
 
 export {
   CustomButton,
@@ -18,4 +22,8 @@ export {
   CalendarToolbar,
   CalendarFilter,
   LoadingSpinner,
+  PersonalInfo,
+  ContactInfo,
+  PasswordInfo,
+  UserInitializedRoute
 };

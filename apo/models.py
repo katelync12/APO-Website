@@ -7,15 +7,13 @@ from django.contrib.auth.models import Group
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     middle_name = models.CharField(max_length=50, null=True, blank=True)
-    school_email = models.EmailField(unique=True)
-    personal_email = models.EmailField(unique=True)
     discord_username = models.CharField(max_length=50)
     phone_number = PhoneNumberField()
     birthday = models.DateField()
     pronouns = models.CharField(max_length=50, null=True, blank=True)
     dietary_restrictions = models.TextField(null=True, blank=True)
     additional_info = models.TextField(null=True, blank=True)
-    profile_picture = models.BinaryField()
+    profile_picture = models.ImageField(null=True, blank=True, upload_to="images/")
     membership = models.ForeignKey('Membership', on_delete=models.SET_NULL, null=True, blank=True)
 
 class Membership(models.Model):

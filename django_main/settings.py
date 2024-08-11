@@ -142,8 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/assets/' #changed this from /static/ to /assets/ (assets is the static folder Vite generates when building)
-
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'reactapp/build/static'), #change this to use viteapp
     os.path.join(BASE_DIR, 'viteapp/dist/assets'), 
